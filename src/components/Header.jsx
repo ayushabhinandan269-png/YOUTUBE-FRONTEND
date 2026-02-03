@@ -1,14 +1,16 @@
-function Header({ onToggle }) {
+function Header({ onToggle, search, setSearch }) {
   return (
     <header className="flex items-center justify-between px-6 py-3 border-b">
       <div className="flex items-center gap-4">
         <button onClick={onToggle} className="text-xl">☰</button>
-        <h1 className="text-xl font-bold">YouTube Clone</h1>
+        <h1 className="text-xl font-bold">YouTube</h1>
       </div>
 
       <input
         type="text"
         placeholder="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         className="w-1/3 px-4 py-1 border rounded-full outline-none"
       />
 
