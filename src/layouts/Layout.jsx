@@ -6,7 +6,9 @@ function Layout({ children, user, search, setSearch }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <>
+    <div className="h-screen flex flex-col">
+
+      {/* HEADER */}
       <Header
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         search={search}
@@ -14,11 +16,20 @@ function Layout({ children, user, search, setSearch }) {
         user={user}
       />
 
-      <div className="flex">
+      {/* BODY */}
+      <div className="flex flex-1 pt-16 overflow-hidden">
+
+        {/* SIDEBAR */}
         <Sidebar isOpen={isSidebarOpen} />
-        <div className="flex-1">{children}</div>
+
+        {/* MAIN CONTENT */}
+        <main className="flex-1 overflow-y-auto bg-white">
+          <div className="px-6 py-4">
+            {children}
+          </div>
+        </main>
       </div>
-    </>
+    </div>
   );
 }
 

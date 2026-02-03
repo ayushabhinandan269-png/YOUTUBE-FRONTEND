@@ -1,35 +1,46 @@
-import { useState } from "react";
 import { videos } from "../data/videos";
-import VideoCard from "../components/VideoCard";
-import FilterButtons from "../components/FilterButtons";
+import { Link } from "react-router-dom";
 
 function Home({ search }) {
-  const categories = ["All", ...new Set(videos.map(v => v.category))];
-  const [activeCategory, setActiveCategory] = useState("All");
-
-  const filteredVideos = videos.filter(video => {
-    const matchCategory =
-      activeCategory === "All" || video.category === activeCategory;
-
-    const matchSearch =
-      video.title.toLowerCase().includes(search.toLowerCase());
-
-    return matchCategory && matchSearch;
-  });
+  const filteredVideos = videos.filter((video) =>
+    `${video.title} ${video.channelName} ${video.category}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
-    <div className="flex-1">
-      <FilterButtons
-        categories={categories}
-        active={activeCategory}
-        onSelect={setActiveCategory}
-      />
+    <div className="flex-1 p-6 pt-20">
+      {filteredVideos.length === 0 ? (
+        <p className="text-gray-500">No videos found</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredVideos.map((video) => (
+            <Link
+              key={video.videoId}
+              to={`/video/${video.videoId}`}
+              className="cursor-pointer"
+            >
+              <img
+                src={video.thumbnailUrl}
+                alt={video.title}
+                className="w-full h-48 object-cover rounded"
+              />
 
-      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredVideos.map(video => (
-          <VideoCard key={video.videoId} video={video} />
-        ))}
-      </div>
+              <h3 className="mt-2 font-medium text-sm line-clamp-2">
+                {video.title}
+              </h3>
+
+              <p className="text-xs text-gray-500">
+                {video.channelName}
+              </p>
+
+              <p className="text-xs text-gray-400">
+                {video.views} views
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
