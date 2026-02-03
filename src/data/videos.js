@@ -1,6 +1,7 @@
 export const videos = [
   {
     videoId: "video01",
+    youtubeId: "bMknfKXIFA8", // React Crash Course
     title: "Learn React in 30 Minutes",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1633356122544-f134324a6cee",
@@ -10,6 +11,7 @@ export const videos = [
   },
   {
     videoId: "video02",
+    youtubeId: "TlB_eWDSMt4", // Node.js Crash Course
     title: "Node.js Crash Course",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1518770660439-4636190af475",
@@ -19,6 +21,7 @@ export const videos = [
   },
   {
     videoId: "video03",
+    youtubeId: "lBBtq3Oawqw", // MongoDB Basics
     title: "MongoDB Basics for Beginners",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31",
@@ -28,6 +31,7 @@ export const videos = [
   },
   {
     videoId: "video04",
+    youtubeId: "PkZNo7MFNFg", // JS Interview / Basics
     title: "JavaScript Interview Questions",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1627398242454-45a1465c2479",
@@ -37,6 +41,7 @@ export const videos = [
   },
   {
     videoId: "video05",
+    youtubeId: "nu_pCVPKzTk", // Full Stack Roadmap
     title: "Full Stack Development Roadmap",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
@@ -46,6 +51,7 @@ export const videos = [
   },
   {
     videoId: "video06",
+    youtubeId: "JJSoEo8JSnc", // CSS Flexbox + Grid
     title: "CSS Flexbox & Grid Complete Guide",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1505685296765-3a2736de412f",
@@ -55,6 +61,7 @@ export const videos = [
   },
   {
     videoId: "video07",
+    youtubeId: "L72fhGm1tfE", // Express REST API
     title: "Express.js REST API Tutorial",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1555066931-4365d14bab8c",
@@ -64,6 +71,7 @@ export const videos = [
   },
   {
     videoId: "video08",
+    youtubeId: "RGOj5yH7evk", // Git & GitHub
     title: "Git & GitHub for Beginners",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb",
@@ -71,17 +79,21 @@ export const videos = [
     views: 20300,
     category: "Tools"
   },
-   // ===== APNA COLLEGE STYLE =====
+
+  // ===== APNA COLLEGE STYLE =====
   {
     videoId: "video09",
+    youtubeId: "hKB-YGF14SY", // Apna College DSA Roadmap
     title: "DSA Roadmap for Placements | Apna College Style",
-    thumbnailUrl:"https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
     channelName: "Apna College",
     views: 245000,
     category: "DSA"
   },
   {
     videoId: "video10",
+    youtubeId: "ZxKM3DCV2kE", // Web Dev Roadmap
     title: "Web Development Complete Roadmap 2025",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1526378722484-bd91ca387e72",
@@ -91,6 +103,7 @@ export const videos = [
   },
   {
     videoId: "video11",
+    youtubeId: "t6zLJOCVqD0", // Internships
     title: "How to Crack Internships as a College Student",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
@@ -99,29 +112,10 @@ export const videos = [
     category: "Career"
   },
 
-  // ===== JAVASCRIPT / FRONTEND =====
-  {
-    videoId: "video12",
-    title: "JavaScript Interview Questions (Asked in FAANG)",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1627398242454-45a1465c2479",
-    channelName: "JS Mastery",
-    views: 11200,
-    category: "JavaScript"
-  },
-  {
-    videoId: "video13",
-    title: "CSS Flexbox & Grid in One Video",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1505685296765-3a2736de412f",
-    channelName: "Frontend School",
-    views: 13400,
-    category: "CSS"
-  },
-
-  // ===== FUNNY / RELATABLE DEV CONTENT =====
+  // ===== FUNNY / MEMES =====
   {
     videoId: "video14",
+    youtubeId: "ZbZSe6N_BXs", // Funny dev vibe
     title: "When Your Code Works on First Try 😱",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1520975916090-3105956dac38",
@@ -131,6 +125,7 @@ export const videos = [
   },
   {
     videoId: "video15",
+    youtubeId: "3GwjfUFyY6M", // Funny exam vibe
     title: "Every Programmer During Exams 😂",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1517841905240-472988babdf9",
@@ -140,11 +135,12 @@ export const videos = [
   },
   {
     videoId: "video16",
+    youtubeId: "l482T0yNkeo", // Late night coding vibe
     title: "Debugging at 3 AM Be Like...",
     thumbnailUrl:
       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
     channelName: "Bug Hunters",
     views: 410000,
     category: "Memes"
-  },
+  }
 ];

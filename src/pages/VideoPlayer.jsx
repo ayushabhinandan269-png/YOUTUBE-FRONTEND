@@ -10,24 +10,21 @@ function VideoPlayer() {
   return (
     <div className="flex p-6 gap-6">
 
-      {/* LEFT: VIDEO + INFO */}
+      {/* LEFT */}
       <div className="flex-1">
 
         {/* VIDEO PLAYER */}
-        <img
-          src={video.thumbnailUrl}
-          alt={video.title}
-          className="w-full h-105 object-cover rounded"
-        />
+        <iframe
+          className="w-full h-105 rounded"
+          src={`https://www.youtube.com/embed/${video.youtubeId}`}
+          title={video.title}
+          frameBorder="0"
+          allowFullScreen
+        ></iframe>
 
-        {/* TITLE */}
-        <h2 className="text-xl font-bold mt-4">
-          {video.title}
-        </h2>
+        <h2 className="text-xl font-bold mt-4">{video.title}</h2>
 
-        {/* VIEWS + ACTIONS */}
         <div className="flex items-center justify-between mt-2">
-
           <p className="text-gray-600 text-sm">
             {video.views} views • 1 day ago
           </p>
@@ -39,7 +36,6 @@ function VideoPlayer() {
           </div>
         </div>
 
-        {/* CHANNEL INFO */}
         <div className="flex items-center justify-between mt-4 border-t pt-4">
           <div>
             <p className="font-semibold">{video.channelName}</p>
@@ -51,16 +47,15 @@ function VideoPlayer() {
           </button>
         </div>
 
-        {/* DESCRIPTION */}
         <div className="mt-4 bg-gray-100 p-4 rounded text-sm">
           <p>
-            This video explains <b>{video.title}</b>.  
-            Learn concepts step-by-step with practical examples.
+            This video explains <b>{video.title}</b>. Learn concepts step-by-step
+            with practical examples.
           </p>
         </div>
       </div>
 
-      {/* RIGHT: UP NEXT */}
+      {/* RIGHT */}
       <div className="w-80">
         <h3 className="font-semibold mb-4">Up next</h3>
 
