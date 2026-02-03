@@ -1,14 +1,19 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Auth from "./pages/Auth";
+import VideoPlayer from "./pages/VideoPlayer";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [search, setSearch] = useState("");
+  const [user, setUser] = useState(
+    localStorage.getItem("user")
+  );
 
   return (
     <BrowserRouter>
@@ -16,9 +21,11 @@ function App() {
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         search={search}
         setSearch={setSearch}
+        user={user}
       />
 
       <Routes>
+        {/* HOME */}
         <Route
           path="/"
           element={
@@ -28,8 +35,12 @@ function App() {
             </div>
           }
         />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+
+        {/* AUTH (LOGIN + REGISTER COMBINED) */}
+        <Route path="/auth" element={<Auth setUser={setUser} />} />
+
+        {/* VIDEO PLAYER */}
+        <Route path="/video/:id" element={<VideoPlayer />} />
       </Routes>
     </BrowserRouter>
   );

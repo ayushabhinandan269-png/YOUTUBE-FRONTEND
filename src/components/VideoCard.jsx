@@ -1,6 +1,11 @@
+import { Link } from "react-router-dom";
+
 function VideoCard({ video }) {
   return (
-    <div className="w-72 cursor-pointer">
+    <Link
+      to={`/video/${video.videoId}`}
+      className="w-72 cursor-pointer"
+    >
       <img
         src={video.thumbnailUrl}
         alt={video.title}
@@ -18,7 +23,7 @@ function VideoCard({ video }) {
       <p className="text-gray-500 text-xs">
         {video.views} views
       </p>
-    </div>
+    </Link>
   );
 }
 
