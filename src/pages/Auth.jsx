@@ -29,8 +29,8 @@ function Auth({ setUser }) {
         });
 
         localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", res.data.name);
-        setUser(res.data.name);
+        localStorage.setItem("user", res.data.username);
+        setUser(res.data.username);
 
         navigate("/");
       } else {
