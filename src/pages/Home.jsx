@@ -1,12 +1,30 @@
+import { useState } from "react";
 import { videos } from "../data/videos";
 import VideoCard from "../components/VideoCard";
+import FilterButtons from "../components/FilterButtons";
 
 function Home() {
+  const categories = ["All", ...new Set(videos.map(v => v.category))];
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filteredVideos =
+    activeCategory === "All"
+      ? videos
+      : videos.filter(v => v.category === activeCategory);
+
   return (
-    <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-      {videos.map((video) => (
-        <VideoCard key={video.videoId} video={video} />
-      ))}
+    <div className="flex-1">
+      <FilterButtons
+        categories={categories}
+        active={activeCategory}
+        onSelect={setActiveCategory}
+      />
+
+      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredVideos.map((video) => (
+          <VideoCard key={video.videoId} video={video} />
+        ))}
+      </div>
     </div>
   );
 }

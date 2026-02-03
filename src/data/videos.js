@@ -14,5 +14,13 @@ export const videos = [
     channelName: "Backend Hub",
     views: 9800,
     category: "Node"
+  },
+  {
+    videoId: "video03",
+    title: "MongoDB Basics",
+    thumbnailUrl: "https://via.placeholder.com/300x180",
+    channelName: "DB World",
+    views: 7600,
+    category: "Database"
   }
 ];

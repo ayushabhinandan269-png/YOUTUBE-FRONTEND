@@ -1,9 +1,13 @@
-function Sidebar() {
+function Sidebar({ isOpen }) {
+  if (!isOpen) return null;
+
   return (
-    <aside style={{ width: "200px" }}>
-      <p>Home</p>
-      <p>Explore</p>
-      <p>Subscriptions</p>
+    <aside className="w-52 p-4 border-r h-screen">
+      <ul className="space-y-3">
+        <li className="font-medium cursor-pointer">Home</li>
+        <li className="cursor-pointer">Explore</li>
+        <li className="cursor-pointer">Subscriptions</li>
+      </ul>
     </aside>
   );
 }
