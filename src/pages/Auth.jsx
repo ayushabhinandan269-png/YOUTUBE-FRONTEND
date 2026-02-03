@@ -49,76 +49,77 @@ function Auth({ setUser }) {
     }
   };
 
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <form
-        onSubmit={handleSubmit}
-        className="border p-6 rounded w-80 space-y-4"
-      >
-        <h2 className="text-xl font-bold text-center">
-          {isLogin ? "Login" : "Register"}
-        </h2>
+return (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="w-full max-w-md bg-white border rounded-lg shadow-md p-8">
+
+      <h2 className="text-2xl font-semibold text-center mb-6">
+        {isLogin ? "Sign in" : "Create your account"}
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
 
         {!isLogin && (
           <input
             name="username"
-            placeholder="Username"
-            className="w-full border p-2"
+            placeholder="Full name"
+            className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleChange}
             required
           />
         )}
 
         <input
-          name="email"
           type="email"
-          placeholder="Email"
-          className="w-full border p-2"
+          name="email"
+          placeholder="Email address"
+          className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onChange={handleChange}
           required
         />
 
         <input
-          name="password"
           type="password"
+          name="password"
           placeholder="Password"
-          className="w-full border p-2"
+          className="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onChange={handleChange}
           required
         />
 
         <button
           type="submit"
-          className="w-full bg-black text-white py-2"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          {isLogin ? "Login" : "Register"}
+          {isLogin ? "Sign in" : "Register"}
         </button>
-
-        <p className="text-center text-sm">
-          {isLogin ? (
-            <>
-              Don’t have an account?{" "}
-              <span
-                onClick={() => setIsLogin(false)}
-                className="text-blue-600 cursor-pointer"
-              >
-                Register
-              </span>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <span
-                onClick={() => setIsLogin(true)}
-                className="text-blue-600 cursor-pointer"
-              >
-                Login
-              </span>
-            </>
-          )}
-        </p>
       </form>
+
+      <p className="text-center text-sm mt-6">
+        {isLogin ? (
+          <>
+            Don’t have an account?{" "}
+            <span
+              onClick={() => setIsLogin(false)}
+              className="text-blue-600 cursor-pointer"
+            >
+              Create one
+            </span>
+          </>
+        ) : (
+          <>
+            Already have an account?{" "}
+            <span
+              onClick={() => setIsLogin(true)}
+              className="text-blue-600 cursor-pointer"
+            >
+              Sign in
+            </span>
+          </>
+        )}
+      </p>
     </div>
+  </div>
   );
 }
 
