@@ -1,13 +1,58 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { videos } from "../data/videos";
+import api from "../services/api";
 
 function VideoPlayer() {
   const { id } = useParams();
   const video = videos.find(v => v.videoId === id);
 
+  const [liked, setLiked] = useState(false);
+
   if (!video) {
     return <p className="p-6">Video not found</p>;
   }
+
+  const token = localStorage.getItem("token");
+
+  /* ---------------- SAVE WATCH HISTORY ---------------- */
+  useEffect(() => {
+    if (!token) return;
+
+    api.post(
+      `/user/history/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    ).catch(() => {});
+  }, [id, token]);
+
+  /* ---------------- LIKE / UNLIKE ---------------- */
+  const handleLike = async () => {
+    if (!token) {
+      alert("Please login to like videos");
+      return;
+    }
+
+    try {
+      const res = await api.post(
+        `/user/like/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setLiked(res.data.liked);
+    } catch (err) {
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="flex gap-6 h-[calc(100vh-64px)] px-6 py-4">
@@ -39,12 +84,19 @@ function VideoPlayer() {
           </p>
 
           <div className="flex gap-3">
-            <button className="border px-3 py-1 rounded hover:bg-gray-100">
-              👍 Like
+            <button
+              onClick={handleLike}
+              className={`border px-3 py-1 rounded hover:bg-gray-100 ${
+                liked ? "bg-gray-200" : ""
+              }`}
+            >
+              👍 {liked ? "Liked" : "Like"}
             </button>
+
             <button className="border px-3 py-1 rounded hover:bg-gray-100">
               👎 Dislike
             </button>
+
             <button className="border px-3 py-1 rounded hover:bg-gray-100">
               🔗 Share
             </button>
@@ -79,39 +131,38 @@ function VideoPlayer() {
       </div>
 
       {/* RIGHT: UP NEXT */}
-     {/* RIGHT: UP NEXT */}
-<aside className="w-80 overflow-y-auto">
-  <h3 className="font-semibold mb-4">Up next</h3>
+      <aside className="w-80 overflow-y-auto">
+        <h3 className="font-semibold mb-4">Up next</h3>
 
-  {videos
-    .filter(v => v.videoId !== id)
-    .map(v => (
-      <Link
-        key={v.videoId}
-        to={`/video/${v.videoId}`}
-        className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded"
-      >
-        {/* FIXED SIZE THUMBNAIL */}
-        <div className="w-40 aspect-video bg-black rounded overflow-hidden shrink-0">
-          <img
-            src={v.thumbnailUrl}
-            alt={v.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {videos
+          .filter(v => v.videoId !== id)
+          .map(v => (
+            <Link
+              key={v.videoId}
+              to={`/video/${v.videoId}`}
+              className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded"
+            >
+              {/* FIXED SIZE THUMBNAIL */}
+              <div className="w-40 aspect-video bg-black rounded overflow-hidden shrink-0">
+                <img
+                  src={v.thumbnailUrl}
+                  alt={v.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-        {/* TEXT */}
-        <div className="flex flex-col">
-          <p className="text-sm font-medium line-clamp-2">
-            {v.title}
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            {v.channelName}
-          </p>
-        </div>
-      </Link>
-    ))}
-</aside>
+              {/* TEXT */}
+              <div className="flex flex-col">
+                <p className="text-sm font-medium line-clamp-2">
+                  {v.title}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {v.channelName}
+                </p>
+              </div>
+            </Link>
+          ))}
+      </aside>
 
     </div>
   );
