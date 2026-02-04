@@ -6,18 +6,20 @@ function Subscriptions() {
 
   useEffect(() => {
     api.get("/user/subscriptions", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     }).then(res => setSubs(res.data));
   }, []);
 
   return (
-    <div className="p-6">
+    <div>
       <h1 className="text-xl font-bold mb-4">Subscriptions</h1>
 
-      {subs.map((s, i) => (
-        <p key={i} className="border p-2 rounded mb-2">
-          {s.channelName}
-        </p>
+      {subs.length === 0 && <p>No subscriptions yet</p>}
+
+      {subs.map(s => (
+        <p key={s}>{s}</p>
       ))}
     </div>
   );
