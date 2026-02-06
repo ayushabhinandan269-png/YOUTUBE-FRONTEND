@@ -1,4 +1,6 @@
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 import {
   HomeIcon,
   FireIcon,
@@ -6,12 +8,39 @@ import {
   RectangleStackIcon,
   ClockIcon,
   HandThumbUpIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
 function Sidebar({ isOpen }) {
+  const [channels, setChannels] = useState([]);
+
+  // 🔐 SAFE USER PARSING
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch {
+    user = null;
+  }
+
   const linkStyle = ({ isActive }) =>
     `flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 cursor-pointer
      ${isActive ? "bg-gray-200 font-medium" : ""}`;
+
+  /* ================= FETCH CHANNELS ================= */
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const fetchChannels = async () => {
+      try {
+        const res = await api.get("/channels");
+        setChannels(res.data || []);
+      } catch {
+        // safe ignore
+      }
+    };
+
+    fetchChannels();
+  }, [isOpen]);
 
   return (
     <aside
@@ -29,25 +58,22 @@ function Sidebar({ isOpen }) {
     >
       <ul className="p-3 space-y-1 text-sm">
 
-        {/* HOME */}
+        {/* MAIN */}
         <NavLink to="/" className={linkStyle}>
           <HomeIcon className="h-5 w-5" />
           {isOpen && <span>Home</span>}
         </NavLink>
 
-        {/* EXPLORE */}
         <NavLink to="/explore" className={linkStyle}>
           <FireIcon className="h-5 w-5" />
           {isOpen && <span>Explore</span>}
         </NavLink>
 
-        {/* SHORTS */}
         <NavLink to="/shorts" className={linkStyle}>
           <PlayIcon className="h-5 w-5" />
           {isOpen && <span>Shorts</span>}
         </NavLink>
 
-        {/* SUBSCRIPTIONS */}
         <NavLink to="/subscriptions" className={linkStyle}>
           <RectangleStackIcon className="h-5 w-5" />
           {isOpen && <span>Subscriptions</span>}
@@ -55,34 +81,59 @@ function Sidebar({ isOpen }) {
 
         <hr className="my-3" />
 
-        {/* HISTORY */}
+        {/* USER */}
         <NavLink to="/history" className={linkStyle}>
           <ClockIcon className="h-5 w-5" />
           {isOpen && <span>History</span>}
         </NavLink>
 
-        {/* LIKED VIDEOS */}
         <NavLink to="/liked" className={linkStyle}>
           <HandThumbUpIcon className="h-5 w-5" />
           {isOpen && <span>Liked Videos</span>}
         </NavLink>
 
-        {/* EXTRA CHANNELS (SCROLL DEMO) */}
+        {/* YOUR CHANNEL */}
+        {user && (
+          <>
+            <hr className="my-3" />
+            <NavLink
+              to={user.channel ? `/channel/${user.channel}` : "/create-channel"}
+              className={linkStyle}
+            >
+              <UserCircleIcon className="h-5 w-5" />
+              {isOpen && (
+                <span>{user.channel ? "Your Channel" : "Create Channel"}</span>
+              )}
+            </NavLink>
+          </>
+        )}
+
+        {/* CHANNEL LIST */}
         {isOpen && (
           <>
             <hr className="my-3" />
-            <p className="px-2 text-xs text-gray-400">More from YouTube</p>
+            <p className="px-2 text-xs text-gray-400">
+              More from YouTube
+            </p>
 
-            {Array.from({ length: 8 }).map((_, i) => (
-              <NavLink
-                key={i}
-                to={`/channel/${i + 1}`}
-                className={linkStyle}
-              >
-                <PlayIcon className="h-5 w-5" />
-                <span>Channel {i + 1}</span>
-              </NavLink>
-            ))}
+            {channels.length > 0 ? (
+              channels.map((channel) => (
+                <NavLink
+                  key={channel._id}
+                  to={`/channel/${channel._id}`}
+                  className={linkStyle}
+                >
+                  <PlayIcon className="h-5 w-5" />
+                  <span className="truncate">
+                    {channel.channelName}
+                  </span>
+                </NavLink>
+              ))
+            ) : (
+              <p className="px-2 py-2 text-xs text-gray-400">
+                No channels available
+              </p>
+            )}
           </>
         )}
       </ul>
@@ -91,3 +142,9 @@ function Sidebar({ isOpen }) {
 }
 
 export default Sidebar;
+
+
+
+
+
+

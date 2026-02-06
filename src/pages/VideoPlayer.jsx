@@ -17,10 +17,30 @@ function VideoPlayer() {
   if (!video) return <p className="p-6">Video not found</p>;
 
   /* ================= SAVE WATCH HISTORY ================= */
-  useEffect(() => {
+useEffect(() => {
+  const saveHistory = async () => {
+    const token = localStorage.getItem("token");
     if (!token) return;
-    api.post(`/user/history/${id}`);
-  }, [id, token]);
+
+    try {
+      await api.post(
+        `/user/history/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.warn("History save failed (ignored)");
+    }
+  };
+
+  saveHistory();
+}, [id]);
+
+
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {

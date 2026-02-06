@@ -1,30 +1,65 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import api from "../services/api";
 import { videos } from "../data/videos";
+import { Link } from "react-router-dom";
 
 function Liked() {
-  const [liked, setLiked] = useState([]);
+  const [likedVideos, setLikedVideos] = useState([]);
 
   useEffect(() => {
-    api.get("/user/likes", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }).then(res => setLiked(res.data));
+    const fetchLikedVideos = async () => {
+      try {
+        const res = await api.get("/user/likes");
+
+        // res.data = [{ videoId }]
+        const likedIds = res.data.map((v) => v.videoId);
+
+        const matchedVideos = videos.filter((video) =>
+          likedIds.includes(video.videoId)
+        );
+
+        setLikedVideos(matchedVideos);
+      } catch (err) {
+        console.warn("Could not fetch liked videos");
+      }
+    };
+
+    fetchLikedVideos();
   }, []);
 
-  const likedVideos = videos.filter(v =>
-    liked.some(l => l.videoId === v.videoId)
-  );
-
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Liked Videos</h1>
+    <div className="flex-1 px-6 pt-4 pb-10">
+      <h1 className="text-2xl font-bold mb-6">Liked Videos</h1>
 
-      {likedVideos.map(v => (
-        <Link key={v.videoId} to={`/video/${v.videoId}`} className="block mb-3">
-          {v.title}
-        </Link>
-      ))}
+      {likedVideos.length === 0 ? (
+        <p className="text-gray-500">No liked videos yet</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {likedVideos.map((video) => (
+            <Link
+              key={video.videoId}
+              to={`/video/${video.videoId}`}
+              className="group"
+            >
+              <div className="aspect-video rounded-xl overflow-hidden bg-black">
+                <img
+                  src={video.thumbnailUrl}
+                  alt={video.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition"
+                />
+              </div>
+
+              <h3 className="mt-2 text-sm font-semibold line-clamp-2">
+                {video.title}
+              </h3>
+
+              <p className="text-xs text-gray-500">
+                {video.channelName} • {video.views} views
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

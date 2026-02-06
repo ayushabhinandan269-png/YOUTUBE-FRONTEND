@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import Layout from "./layouts/Layout";
 
+/* Pages */
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Subscriptions from "./pages/Subscriptions";
@@ -11,6 +12,7 @@ import Liked from "./pages/Liked";
 import Shorts from "./pages/Shorts";
 import VideoPlayer from "./pages/VideoPlayer";
 import Auth from "./pages/Auth";
+import Channel from "./pages/Channel"; // NEW
 
 function App() {
   const [search, setSearch] = useState("");
@@ -28,10 +30,10 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* AUTH (NO LAYOUT) */}
+        {/* ================= AUTH (NO LAYOUT) ================= */}
         <Route path="/auth" element={<Auth setUser={setUser} />} />
 
-        {/* HOME */}
+        {/* ================= HOME ================= */}
         <Route
           path="/"
           element={
@@ -41,7 +43,7 @@ function App() {
           }
         />
 
-        {/* EXPLORE */}
+        {/* ================= EXPLORE ================= */}
         <Route
           path="/explore"
           element={
@@ -51,7 +53,7 @@ function App() {
           }
         />
 
-        {/* SHORTS */}
+        {/* ================= SHORTS ================= */}
         <Route
           path="/shorts"
           element={
@@ -61,7 +63,7 @@ function App() {
           }
         />
 
-        {/* SUBSCRIPTIONS */}
+        {/* ================= SUBSCRIPTIONS ================= */}
         <Route
           path="/subscriptions"
           element={
@@ -71,7 +73,7 @@ function App() {
           }
         />
 
-        {/* HISTORY */}
+        {/* ================= HISTORY ================= */}
         <Route
           path="/history"
           element={
@@ -81,7 +83,7 @@ function App() {
           }
         />
 
-        {/* LIKED */}
+        {/* ================= LIKED VIDEOS ================= */}
         <Route
           path="/liked"
           element={
@@ -91,7 +93,17 @@ function App() {
           }
         />
 
-        {/* VIDEO PLAYER */}
+        {/* ================= CHANNEL PAGE ================= */}
+        <Route
+          path="/channel/:channelId"
+          element={
+            <Layout user={user} search={search} setSearch={setSearch}>
+              <Channel />
+            </Layout>
+          }
+        />
+
+        {/* ================= VIDEO PLAYER ================= */}
         <Route
           path="/video/:id"
           element={
