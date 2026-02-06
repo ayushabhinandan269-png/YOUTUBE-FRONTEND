@@ -21,6 +21,7 @@ function Auth({ setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ VALIDATION
     if (!form.email || !form.password) {
       alert("Email and password are required");
       return;
@@ -60,7 +61,7 @@ function Auth({ setUser }) {
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Server error");
+      alert(err.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -78,6 +79,7 @@ function Auth({ setUser }) {
 
           {!isLogin && (
             <input
+              type="text"
               name="username"
               placeholder="Full name"
               value={form.username}
@@ -114,11 +116,7 @@ function Auth({ setUser }) {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading
-              ? "Please wait..."
-              : isLogin
-              ? "Sign in"
-              : "Register"}
+            {loading ? "Please wait..." : isLogin ? "Sign in" : "Register"}
           </button>
         </form>
 
