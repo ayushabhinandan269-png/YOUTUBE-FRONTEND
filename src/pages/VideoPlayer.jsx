@@ -16,7 +16,6 @@ function VideoPlayer() {
   const token = localStorage.getItem("token");
   const myChannelId = localStorage.getItem("channelId");
 
-  // 🔐 SAFE USER PARSING
   let loggedInUser = null;
   try {
     loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -26,38 +25,23 @@ function VideoPlayer() {
 
   if (!video) return <p className="p-6">Video not found</p>;
 
-  // ✅ OWNER CHECK
   const isOwner = myChannelId === video.channelId;
 
   /* ================= SAVE WATCH HISTORY ================= */
   useEffect(() => {
-    const saveHistory = async () => {
-      if (!token) return;
-      try {
-        await api.post(
-          `/user/history/${id}`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } catch {}
-    };
-    saveHistory();
+    if (!token) return;
+    api.post(`/user/history/${id}`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).catch(() => {});
   }, [id, token]);
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await api.get(`/comments/${id}`);
-        setComments(res.data);
-      } catch (err) {
-        console.error("Failed to fetch comments", err);
-      }
-    };
-    fetchComments();
+    api.get(`/comments/${id}`)
+      .then((res) => setComments(res.data))
+      .catch(() => {});
   }, [id]);
 
-  /* ================= LIKE ================= */
   const handleLike = async () => {
     if (!token) return alert("Login required");
     try {
@@ -66,7 +50,6 @@ function VideoPlayer() {
     } catch {}
   };
 
-  /* ================= SUBSCRIBE ================= */
   const handleSubscribe = async () => {
     if (!token) return alert("Login required");
     try {
@@ -75,11 +58,8 @@ function VideoPlayer() {
     } catch {}
   };
 
-  /* ================= ADD COMMENT ================= */
   const addComment = async () => {
-    if (!token) return alert("Login required");
-    if (!commentText.trim()) return;
-
+    if (!token || !commentText.trim()) return;
     try {
       const res = await api.post(`/comments/${id}`, {
         text: commentText,
@@ -87,12 +67,9 @@ function VideoPlayer() {
       });
       setComments([res.data, ...comments]);
       setCommentText("");
-    } catch {
-      alert("Failed to add comment");
-    }
+    } catch {}
   };
 
-  /* ================= DELETE COMMENT ================= */
   const deleteComment = async (commentId) => {
     try {
       await api.delete(`/comments/${commentId}`);
@@ -102,14 +79,12 @@ function VideoPlayer() {
     }
   };
 
-  /* ================= DELETE VIDEO (OWNER) ================= */
   const deleteVideo = async () => {
     if (!window.confirm("Delete this video?")) return;
     try {
       await api.delete(`/videos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Video deleted");
       navigate(`/channel/${video.channelId}`);
     } catch {
       alert("Delete failed");
@@ -117,11 +92,12 @@ function VideoPlayer() {
   };
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-64px)] px-6 py-4">
+    <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 py-4">
 
-      {/* ================= MAIN VIDEO ================= */}
-      <div className="flex-1 overflow-y-auto pr-4">
+      {/* ================= MAIN ================= */}
+      <div className="flex-1">
 
+        {/* VIDEO */}
         <div className="w-full aspect-video bg-black rounded overflow-hidden">
           <iframe
             className="w-full h-full"
@@ -131,14 +107,17 @@ function VideoPlayer() {
           />
         </div>
 
-        <h1 className="text-xl font-bold mt-4">{video.title}</h1>
+        <h1 className="text-lg sm:text-xl font-bold mt-4">
+          {video.title}
+        </h1>
 
-        <div className="flex justify-between mt-2 items-center">
+        {/* ACTIONS */}
+        <div className="flex flex-wrap justify-between gap-3 mt-2 items-center">
           <p className="text-sm text-gray-600">
             {formatNumber(video.views)} views
           </p>
 
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={handleLike}
               className={`border px-3 py-1 rounded ${
@@ -148,7 +127,6 @@ function VideoPlayer() {
               👍 {liked ? "Liked" : "Like"}
             </button>
 
-            {/* OWNER CONTROLS */}
             {isOwner && (
               <>
                 <Link
@@ -157,7 +135,6 @@ function VideoPlayer() {
                 >
                   Edit
                 </Link>
-
                 <button
                   onClick={deleteVideo}
                   className="border px-3 py-1 rounded text-sm text-red-600"
@@ -169,8 +146,8 @@ function VideoPlayer() {
           </div>
         </div>
 
-        {/* ================= CHANNEL INFO ================= */}
-        <div className="flex justify-between mt-4 border-t pt-4 items-center">
+        {/* CHANNEL INFO */}
+        <div className="flex justify-between items-center mt-4 border-t pt-4">
           <div className="flex gap-3 items-center">
             <Link to={`/channel/${video.channelId}`}>
               <img
@@ -203,7 +180,7 @@ function VideoPlayer() {
           )}
         </div>
 
-        {/* ================= COMMENTS ================= */}
+        {/* COMMENTS */}
         <div className="mt-6">
           <h3 className="font-semibold mb-3">Comments</h3>
 
@@ -243,7 +220,7 @@ function VideoPlayer() {
       </div>
 
       {/* ================= UP NEXT ================= */}
-      <aside className="w-80 overflow-y-auto">
+      <aside className="w-full lg:w-80">
         <h3 className="font-semibold mb-4">Up next</h3>
 
         {videos
@@ -254,7 +231,7 @@ function VideoPlayer() {
               to={`/video/${v.videoId}`}
               className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded-lg"
             >
-              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden">
+              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden shrink-0">
                 <img
                   src={v.thumbnailUrl}
                   alt={v.title}
@@ -262,7 +239,7 @@ function VideoPlayer() {
                 />
               </div>
 
-              <div className="flex-1 h-24 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between">
                 <p className="text-sm font-medium line-clamp-2">
                   {v.title}
                 </p>
