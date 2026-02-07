@@ -1,43 +1,136 @@
 export const videos = [
-  // ================= CORE TECH =================
+ // ================= CODE WITH JOHN =================
   {
     videoId: "video01",
     youtubeId: "bMknfKXIFA8",
     title: "Learn React in 30 Minutes",
     thumbnailUrl: "https://img.youtube.com/vi/bMknfKXIFA8/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001001",
     channelName: "Code with John",
     channelAvatar: "https://ui-avatars.com/api/?name=Code+with+John",
     views: 15200,
+    likes: 1200,
+    duration: "30:12",
+    uploadedAt: "2024-06-10",
     category: "React",
   },
+  {
+    videoId: "video01b",
+    youtubeId: "Ke90Tje7VS0",
+    title: "React Hooks Explained",
+    thumbnailUrl: "https://img.youtube.com/vi/Ke90Tje7VS0/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001001",
+    channelName: "Code with John",
+    channelAvatar: "https://ui-avatars.com/api/?name=Code+with+John",
+    views: 18400,
+    likes: 1600,
+    duration: "25:40",
+    uploadedAt: "2024-06-01",
+    category: "React",
+  },
+  {
+    videoId: "video01c",
+    youtubeId: "w7ejDZ8SWv8",
+    title: "React Router v6 Tutorial",
+    thumbnailUrl: "https://img.youtube.com/vi/w7ejDZ8SWv8/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001001",
+    channelName: "Code with John",
+    channelAvatar: "https://ui-avatars.com/api/?name=Code+with+John",
+    views: 21200,
+    likes: 1900,
+    duration: "40:15",
+    uploadedAt: "2024-05-20",
+    category: "React",
+  },
+
+  // ================= BACKEND HUB =================
   {
     videoId: "video02",
     youtubeId: "TlB_eWDSMt4",
     title: "Node.js Crash Course",
     thumbnailUrl: "https://img.youtube.com/vi/TlB_eWDSMt4/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001002",
     channelName: "Backend Hub",
     channelAvatar: "https://ui-avatars.com/api/?name=Backend+Hub",
     views: 9800,
+    likes: 840,
+    duration: "1:02:45",
+    uploadedAt: "2024-05-18",
     category: "Node",
   },
+  {
+    videoId: "video02b",
+    youtubeId: "ENrzD9HAZK4",
+    title: "Node.js Event Loop Explained",
+    thumbnailUrl: "https://img.youtube.com/vi/ENrzD9HAZK4/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001002",
+    channelName: "Backend Hub",
+    channelAvatar: "https://ui-avatars.com/api/?name=Backend+Hub",
+    views: 14300,
+    likes: 1100,
+    duration: "22:30",
+    uploadedAt: "2024-04-29",
+    category: "Node",
+  },
+  {
+    videoId: "video02c",
+    youtubeId: "fBNz5xF-Kx4",
+    title: "Build REST APIs with Node & Express",
+    thumbnailUrl: "https://img.youtube.com/vi/fBNz5xF-Kx4/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001002",
+    channelName: "Backend Hub",
+    channelAvatar: "https://ui-avatars.com/api/?name=Backend+Hub",
+    views: 19800,
+    likes: 1500,
+    duration: "48:10",
+    uploadedAt: "2024-04-10",
+    category: "Node",
+  },
+
+  // ================= DB WORLD =================
   {
     videoId: "video03",
     youtubeId: "ofme2o29ngU",
     title: "MongoDB Basics for Beginners",
     thumbnailUrl: "https://img.youtube.com/vi/ofme2o29ngU/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001003",
     channelName: "DB World",
     channelAvatar: "https://ui-avatars.com/api/?name=DB+World",
     views: 7600,
+    likes: 560,
+    duration: "45:10",
+    uploadedAt: "2024-04-12",
     category: "MongoDB",
   },
+  {
+    videoId: "video03b",
+    youtubeId: "ExcRbA7fy_A",
+    title: "MongoDB Aggregation Pipeline",
+    thumbnailUrl: "https://img.youtube.com/vi/ExcRbA7fy_A/maxresdefault.jpg",
+    channelId: "65f1a9c2e3b9a12a9c001003",
+    channelName: "DB World",
+    channelAvatar: "https://ui-avatars.com/api/?name=DB+World",
+    views: 11800,
+    likes: 900,
+    duration: "32:55",
+    uploadedAt: "2024-03-22",
+    category: "MongoDB",
+  },
+
   {
     videoId: "video04",
     youtubeId: "PkZNo7MFNFg",
     title: "JavaScript Interview Questions",
     thumbnailUrl: "https://img.youtube.com/vi/PkZNo7MFNFg/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c001004",
     channelName: "JS Mastery",
     channelAvatar: "https://ui-avatars.com/api/?name=JS+Mastery",
+
     views: 11200,
+    likes: 920,
+    duration: "52:30",
+    uploadedAt: "2024-03-01",
     category: "JavaScript",
   },
 
@@ -47,9 +140,15 @@ export const videos = [
     youtubeId: "nu_pCVPKzTk",
     title: "Full Stack Development Roadmap",
     thumbnailUrl: "https://img.youtube.com/vi/nu_pCVPKzTk/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c002001",
     channelName: "Tech Guide",
     channelAvatar: "https://ui-avatars.com/api/?name=Tech+Guide",
+
     views: 18900,
+    likes: 1500,
+    duration: "38:44",
+    uploadedAt: "2024-02-10",
     category: "Web Dev",
   },
   {
@@ -57,9 +156,15 @@ export const videos = [
     youtubeId: "JJSoEo8JSnc",
     title: "CSS Flexbox & Grid Complete Guide",
     thumbnailUrl: "https://img.youtube.com/vi/JJSoEo8JSnc/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c002002",
     channelName: "Frontend School",
     channelAvatar: "https://ui-avatars.com/api/?name=Frontend+School",
+
     views: 13400,
+    likes: 1100,
+    duration: "1:10:00",
+    uploadedAt: "2024-01-25",
     category: "CSS",
   },
   {
@@ -67,9 +172,15 @@ export const videos = [
     youtubeId: "Oe421EPjeBE",
     title: "Express.js REST API Tutorial",
     thumbnailUrl: "https://img.youtube.com/vi/Oe421EPjeBE/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c002003",
     channelName: "API Academy",
     channelAvatar: "https://ui-avatars.com/api/?name=API+Academy",
+
     views: 8700,
+    likes: 640,
+    duration: "49:20",
+    uploadedAt: "2023-12-18",
     category: "Node",
   },
   {
@@ -77,9 +188,15 @@ export const videos = [
     youtubeId: "RGOj5yH7evk",
     title: "Git & GitHub for Beginners",
     thumbnailUrl: "https://img.youtube.com/vi/RGOj5yH7evk/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c002004",
     channelName: "Dev Tools",
     channelAvatar: "https://ui-avatars.com/api/?name=Dev+Tools",
+
     views: 20300,
+    likes: 1700,
+    duration: "33:55",
+    uploadedAt: "2023-11-05",
     category: "Tools",
   },
 
@@ -89,9 +206,15 @@ export const videos = [
     youtubeId: "tNm_NNSB3_w",
     title: "DSA Roadmap for Placements | Apna College",
     thumbnailUrl: "https://img.youtube.com/vi/tNm_NNSB3_w/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c003001",
     channelName: "STRIVER",
     channelAvatar: "https://ui-avatars.com/api/?name=STRIVER",
+
     views: 245000,
+    likes: 18000,
+    duration: "1:45:00",
+    uploadedAt: "2023-09-15",
     category: "DSA",
   },
   {
@@ -99,9 +222,15 @@ export const videos = [
     youtubeId: "GLk7-imcjiI",
     title: "Web Development Complete Roadmap 2025",
     thumbnailUrl: "https://img.youtube.com/vi/GLk7-imcjiI/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c003002",
     channelName: "Love Babbar",
     channelAvatar: "https://ui-avatars.com/api/?name=Love+Babbar",
+
     views: 189000,
+    likes: 21000,
+    duration: "2:10:40",
+    uploadedAt: "2023-08-02",
     category: "Web Dev",
   },
 
@@ -111,9 +240,15 @@ export const videos = [
     youtubeId: "9bZkp7q19f0",
     title: "Every Programmer During Exams 😂",
     thumbnailUrl: "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c004001",
     channelName: "College Fun",
     channelAvatar: "https://ui-avatars.com/api/?name=College+Fun",
+
     views: 320000,
+    likes: 28000,
+    duration: "6:20",
+    uploadedAt: "2023-07-10",
     category: "Funny",
   },
   {
@@ -121,9 +256,15 @@ export const videos = [
     youtubeId: "CevxZvSJLk8",
     title: "Debugging at 3 AM Be Like...",
     thumbnailUrl: "https://img.youtube.com/vi/CevxZvSJLk8/maxresdefault.jpg",
+
+    channelId: "65f1a9c2e3b9a12a9c004002",
     channelName: "Bug Hunters",
     channelAvatar: "https://ui-avatars.com/api/?name=Bug+Hunters",
+
     views: 410000,
+    likes: 36000,
+    duration: "5:05",
+    uploadedAt: "2023-06-01",
     category: "Memes",
   },
 
@@ -132,27 +273,46 @@ export const videos = [
     videoId: "game02",
     title: "Minecraft Survival Series – Episode 1",
     thumbnailUrl: "https://images.unsplash.com/photo-1611996575749-79a3a250f948",
+
+    channelId: "65f1a9c2e3b9a12a9c005001",
     channelName: "Minecraft India",
     channelAvatar: "https://ui-avatars.com/api/?name=Minecraft+India",
+
     views: 720000,
+    likes: 55000,
+    duration: "28:45",
+    uploadedAt: "2023-05-12",
     category: "Gaming",
   },
   {
     videoId: "game03",
     title: "BGMI Clutch Moments | Indian Gamers",
     thumbnailUrl: "https://images.unsplash.com/photo-1611162617474-5b21e879e113",
+
+    channelId: "65f1a9c2e3b9a12a9c005002",
     channelName: "BGMI Pro",
     channelAvatar: "https://ui-avatars.com/api/?name=BGMI+Pro",
+
     views: 860000,
+    likes: 72000,
+    duration: "18:30",
+    uploadedAt: "2023-04-22",
     category: "Gaming",
   },
   {
     videoId: "game04",
     title: "Free Fire Funny Moments 😂",
     thumbnailUrl: "https://images.unsplash.com/photo-1593305841991-05c297ba4575",
+
+    channelId: "65f1a9c2e3b9a12a9c005003",
     channelName: "FF India",
     channelAvatar: "https://ui-avatars.com/api/?name=FF+India",
+
     views: 1100000,
+    likes: 98000,
+    duration: "12:10",
+    uploadedAt: "2023-03-11",
     category: "Gaming",
   },
 ];
+

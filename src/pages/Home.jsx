@@ -1,20 +1,12 @@
 import { useState } from "react";
 import { videos } from "../data/videos";
 import { Link } from "react-router-dom";
+import { formatNumber } from "../utils/formatNumber";
 
+/* ================= AUTO CATEGORIES ================= */
 const categories = [
   "All",
-  "React",
-  "JavaScript",
-  "Node",
-  "MongoDB",
-  "CSS",
-  "DSA",
-  "Web Dev",
-  "Tools",
-  "Gaming",
-  "Funny",
-  "Memes",
+  ...Array.from(new Set(videos.map((v) => v.category))),
 ];
 
 function Home({ search }) {
@@ -58,41 +50,55 @@ function Home({ search }) {
       ) : (
         <div className="grid gap-x-6 gap-y-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filteredVideos.map((video) => (
-            <Link key={video.videoId} to={`/video/${video.videoId}`} className="group">
+            <div key={video.videoId} className="group">
 
-              {/* Thumbnail */}
-              <div className="w-full aspect-video rounded-xl overflow-hidden bg-black">
-                <img
-                  src={video.thumbnailUrl}
-                  alt={video.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+              {/* Thumbnail → Video */}
+              <Link to={`/video/${video.videoId}`}>
+                <div className="w-full aspect-video rounded-xl overflow-hidden bg-black">
+                  <img
+                    src={video.thumbnailUrl}
+                    alt={video.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              </Link>
 
               {/* Video Info */}
               <div className="mt-3 flex gap-3">
-                <img
-                  src={video.channelAvatar}
-                  alt={video.channelName}
-                  className="w-9 h-9 rounded-full object-cover shrink-0 bg-gray-200"
-                />
+
+                {/* Channel Avatar → Channel */}
+                <Link to={`/channel/${video.channelId}`}>
+                  <img
+                    src={video.channelAvatar}
+                    alt={video.channelName}
+                    className="w-9 h-9 rounded-full object-cover shrink-0 bg-gray-200"
+                  />
+                </Link>
 
                 <div>
-                  <h3 className="text-sm font-semibold leading-snug line-clamp-2">
-                    {video.title}
-                  </h3>
+                  {/* Title → Video */}
+                  <Link to={`/video/${video.videoId}`}>
+                    <h3 className="text-sm font-semibold leading-snug line-clamp-2">
+                      {video.title}
+                    </h3>
+                  </Link>
 
-                  <p className="text-xs text-gray-600 mt-1">
+                  {/* Channel Name → Channel */}
+                  <Link
+                    to={`/channel/${video.channelId}`}
+                    className="text-xs text-gray-600 mt-1 hover:underline block"
+                  >
                     {video.channelName}
-                  </p>
+                  </Link>
 
+                  {/* Views */}
                   <p className="text-xs text-gray-500">
-                    {video.views} views
+                    {formatNumber(video.views)} views
                   </p>
                 </div>
               </div>
 
-            </Link>
+            </div>
           ))}
         </div>
       )}
@@ -101,3 +107,5 @@ function Home({ search }) {
 }
 
 export default Home;
+
+

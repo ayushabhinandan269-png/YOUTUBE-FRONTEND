@@ -1,155 +1,158 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import { formatNumber } from "../utils/formatNumber";
 
 function Channel() {
   const { channelId } = useParams();
+  const [activeTab, setActiveTab] = useState("videos");
+
   const [channel, setChannel] = useState(null);
-  const [videos, setVideos] = useState([]);
+  const [channelVideos, setChannelVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔐 SAFE USER PARSING
-  let user = null;
-  try {
-    user = JSON.parse(localStorage.getItem("user"));
-  } catch {
-    user = null;
-  }
-
-  const isOwner = user?.channel === channelId;
-
+  /* ================= FETCH CHANNEL + VIDEOS ================= */
   useEffect(() => {
-    if (!channelId) return;
-
-    const fetchChannel = async () => {
+    const fetchChannelData = async () => {
       try {
         const channelRes = await api.get(`/channels/${channelId}`);
-        setChannel(channelRes.data || null);
+        const videosRes = await api.get(`/channels/${channelId}/videos`);
 
-        const videoRes = await api.get(`/channels/${channelId}/videos`);
-        setVideos(videoRes.data || []);
-      } catch {
+        setChannel(channelRes.data);
+        setChannelVideos(videosRes.data);
+      } catch (err) {
+        console.error("Channel fetch failed", err);
         setChannel(null);
-        setVideos([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchChannel();
+    fetchChannelData();
   }, [channelId]);
 
-  if (loading) {
-    return <p className="p-6 text-gray-500">Loading channel...</p>;
-  }
+  if (loading) return <p className="p-6">Loading channel...</p>;
+  if (!channel) return <p className="p-6 text-red-500">Channel not found</p>;
 
-  if (!channel) {
-    return <p className="p-6 text-red-500">Channel not found</p>;
-  }
+  const totalViews = channelVideos.reduce(
+    (sum, v) => sum + (v.views || 0),
+    0
+  );
+
+  /* ================= PLAYLISTS ================= */
+  const playlists = [
+    {
+      id: "p1",
+      title: "Full Course",
+      description: "Complete learning series",
+      videos: channelVideos.slice(0, 4),
+    },
+    {
+      id: "p2",
+      title: "Popular Uploads",
+      description: "Most watched videos",
+      videos: [...channelVideos]
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 4),
+    },
+  ];
 
   return (
-    <div className="pb-16 bg-white">
+    <div className="pb-16">
 
-      {/* BANNER */}
-      <div className="h-56 w-full bg-linear-to-r from-gray-300 via-gray-200 to-gray-300" />
-
-      {/* HEADER */}
-      <div className="px-6 -mt-16">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-
+      {/* ================= BANNER ================= */}
+      <div className="w-full h-52 bg-gray-200">
+        {channel.banner && (
           <img
-            src={
-              channel.avatar ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                channel.channelName
-              )}&size=160&background=random`
-            }
-            alt={channel.channelName}
-            className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-md"
+            src={channel.banner}
+            className="w-full h-full object-cover"
+            alt="Channel banner"
           />
+        )}
+      </div>
 
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold">
-              {channel.channelName}
-            </h1>
-
-            <p className="text-sm text-gray-600 mt-1">
-              {channel.subscribers || 0} subscribers
-            </p>
-
-            {channel.description && (
-              <p className="text-sm text-gray-500 mt-2 max-w-2xl">
-                {channel.description}
-              </p>
-            )}
-
-            {/* OWNER CONTROLS */}
-            {isOwner && (
-              <div className="flex gap-3 mt-4">
-                <Link
-                  to="/upload"
-                  className="px-5 py-2 bg-black text-white rounded-full"
-                >
-                  Upload Video
-                </Link>
-                <Link
-                  to={`/channel/${channelId}/edit`}
-                  className="px-5 py-2 border rounded-full"
-                >
-                  Edit Channel
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* SUBSCRIBE */}
-          {!isOwner && (
-            <button className="bg-black text-white px-6 py-2 rounded-full">
-              Subscribe
-            </button>
-          )}
+      {/* ================= HEADER ================= */}
+      <div className="px-6 -mt-12 bg-white rounded-xl shadow p-6 flex gap-6 items-center">
+        <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold">
+          {channel.channelName[0]}
         </div>
 
-        {/* TABS */}
-        <div className="mt-8 border-b flex gap-8 text-sm font-medium text-gray-600">
-          <button className="pb-3 border-b-2 border-black text-black">
-            Videos
-          </button>
-          <button className="pb-3 hover:text-black">
-            About
-          </button>
+        <div>
+          <h1 className="text-2xl font-bold">{channel.channelName}</h1>
+          <p className="text-sm text-gray-600">
+            {formatNumber(channel.subscribers)} subscribers
+          </p>
         </div>
       </div>
 
-      {/* VIDEOS */}
+      {/* ================= TABS ================= */}
+      <div className="px-6 mt-8 border-b flex gap-8">
+        {["videos", "playlists", "about"].map((t) => (
+          <button
+            key={t}
+            onClick={() => setActiveTab(t)}
+            className={`pb-3 capitalize ${
+              activeTab === t
+                ? "border-b-2 border-black font-medium"
+                : "text-gray-500"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {/* ================= CONTENT ================= */}
       <div className="px-6 mt-8">
-        {videos.length === 0 ? (
-          <p className="text-gray-500">No videos uploaded yet</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-            {videos.map((video) => (
-              <Link
-                key={video._id}
-                to={`/video/${video.videoId}`}
-                className="group"
-              >
-                <div className="aspect-video rounded-xl overflow-hidden bg-black">
+
+        {/* VIDEOS */}
+        {activeTab === "videos" && (
+          channelVideos.length === 0 ? (
+            <p className="text-gray-500">No videos uploaded yet</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {channelVideos.map((v) => (
+                <Link key={v._id} to={`/video/${v.videoId}`}>
                   <img
-                    src={video.thumbnailUrl}
-                    alt={video.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition"
+                    src={v.thumbnailUrl}
+                    className="rounded-lg"
+                    alt={v.title}
                   />
-                </div>
+                  <p className="font-semibold mt-2">{v.title}</p>
+                </Link>
+              ))}
+            </div>
+          )
+        )}
 
-                <h3 className="mt-2 text-sm font-semibold line-clamp-2">
-                  {video.title}
-                </h3>
-
-                <p className="text-xs text-gray-500 mt-1">
-                  {video.views || 0} views
+        {/* PLAYLISTS */}
+        {activeTab === "playlists" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {playlists.map((p) => (
+              <div key={p.id}>
+                {p.videos[0] && (
+                  <img
+                    src={p.videos[0].thumbnailUrl}
+                    className="rounded-lg"
+                    alt={p.title}
+                  />
+                )}
+                <p className="font-semibold mt-2">{p.title}</p>
+                <p className="text-sm text-gray-500">
+                  {p.videos.length} videos
                 </p>
-              </Link>
+              </div>
             ))}
+          </div>
+        )}
+
+        {/* ABOUT */}
+        {activeTab === "about" && (
+          <div className="max-w-2xl space-y-2">
+            <p><b>Category:</b> {channel.category || "General"}</p>
+            <p><b>Created:</b> {new Date(channel.createdAt).toDateString()}</p>
+            <p><b>Total videos:</b> {channelVideos.length}</p>
+            <p><b>Total views:</b> {formatNumber(totalViews)}</p>
           </div>
         )}
       </div>
@@ -158,4 +161,12 @@ function Channel() {
 }
 
 export default Channel;
+
+
+
+
+
+
+
+
 

@@ -1,30 +1,41 @@
 import { Link } from "react-router-dom";
+import { formatNumber } from "../utils/formatNumber";
 
 function VideoCard({ video }) {
   return (
-    <Link
-      to={`/video/${video.videoId}`}
-      className="w-72 cursor-pointer"
-    >
-      <img
-        src={video.thumbnailUrl}
-        alt={video.title}
-        className="w-full h-40 object-cover rounded-lg"
-      />
+    <div className="w-72">
 
-      <h3 className="mt-2 font-semibold text-sm">
-        {video.title}
-      </h3>
+      {/* VIDEO THUMBNAIL */}
+      <Link to={`/video/${video.videoId}`}>
+        <img
+          src={video.thumbnailUrl}
+          alt={video.title}
+          className="w-full h-40 object-cover rounded-lg"
+        />
+      </Link>
 
-      <p className="text-gray-600 text-sm">
-        {video.channelName}
-      </p>
+      {/* VIDEO INFO */}
+      <div className="mt-2">
+        <h3 className="font-semibold text-sm line-clamp-2">
+          {video.title}
+        </h3>
 
-      <p className="text-gray-500 text-xs">
-        {video.views} views
-      </p>
-    </Link>
+        {/* CHANNEL NAME (CLICKABLE) */}
+        <Link
+          to={`/channel/${video.channelId}`}
+          className="text-gray-600 text-sm hover:underline"
+        >
+          {video.channelName}
+        </Link>
+
+        {/* VIEWS */}
+        <p className="text-gray-500 text-xs">
+          {formatNumber(video.views)} views
+        </p>
+      </div>
+    </div>
   );
 }
 
 export default VideoCard;
+

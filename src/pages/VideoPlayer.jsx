@@ -1,10 +1,12 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { videos } from "../data/videos";
 import api from "../services/api";
+import { formatNumber } from "../utils/formatNumber";
 
 function VideoPlayer() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const video = videos.find((v) => v.videoId === id);
 
   const [liked, setLiked] = useState(false);
@@ -12,35 +14,35 @@ function VideoPlayer() {
   const [commentText, setCommentText] = useState("");
 
   const token = localStorage.getItem("token");
-  const loggedInUser = localStorage.getItem("user");
+  const myChannelId = localStorage.getItem("channelId");
+
+  // 🔐 SAFE USER PARSING
+  let loggedInUser = null;
+  try {
+    loggedInUser = JSON.parse(localStorage.getItem("user"));
+  } catch {
+    loggedInUser = null;
+  }
 
   if (!video) return <p className="p-6">Video not found</p>;
 
+  // ✅ OWNER CHECK
+  const isOwner = myChannelId === video.channelId;
+
   /* ================= SAVE WATCH HISTORY ================= */
-useEffect(() => {
-  const saveHistory = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      await api.post(
-        `/user/history/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-    } catch (err) {
-      console.warn("History save failed (ignored)");
-    }
-  };
-
-  saveHistory();
-}, [id]);
-
-
+  useEffect(() => {
+    const saveHistory = async () => {
+      if (!token) return;
+      try {
+        await api.post(
+          `/user/history/${id}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch {}
+    };
+    saveHistory();
+  }, [id, token]);
 
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
@@ -52,32 +54,25 @@ useEffect(() => {
         console.error("Failed to fetch comments", err);
       }
     };
-
     fetchComments();
   }, [id]);
 
-  /* ================= LIKE / UNLIKE ================= */
+  /* ================= LIKE ================= */
   const handleLike = async () => {
     if (!token) return alert("Login required");
-
     try {
       const res = await api.post(`/user/like/${id}`);
       setLiked(res.data.liked);
-    } catch (err) {
-      console.error("Like failed", err);
-    }
+    } catch {}
   };
 
   /* ================= SUBSCRIBE ================= */
   const handleSubscribe = async () => {
     if (!token) return alert("Login required");
-
     try {
-      await api.post(`/user/subscribe/${video.channelName}`);
+      await api.post(`/user/subscribe/${video.channelId}`);
       alert("Subscribed 🔔");
-    } catch (err) {
-      console.error("Subscribe failed", err);
-    }
+    } catch {}
   };
 
   /* ================= ADD COMMENT ================= */
@@ -88,12 +83,11 @@ useEffect(() => {
     try {
       const res = await api.post(`/comments/${id}`, {
         text: commentText,
-        username: loggedInUser,
+        username: loggedInUser?.name || "User",
       });
-
       setComments([res.data, ...comments]);
       setCommentText("");
-    } catch (err) {
+    } catch {
       alert("Failed to add comment");
     }
   };
@@ -103,8 +97,22 @@ useEffect(() => {
     try {
       await api.delete(`/comments/${commentId}`);
       setComments(comments.filter((c) => c._id !== commentId));
-    } catch (err) {
-      alert("Not authorized to delete this comment");
+    } catch {
+      alert("Not authorized");
+    }
+  };
+
+  /* ================= DELETE VIDEO (OWNER) ================= */
+  const deleteVideo = async () => {
+    if (!window.confirm("Delete this video?")) return;
+    try {
+      await api.delete(`/videos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert("Video deleted");
+      navigate(`/channel/${video.channelId}`);
+    } catch {
+      alert("Delete failed");
     }
   };
 
@@ -119,36 +127,80 @@ useEffect(() => {
             className="w-full h-full"
             src={`https://www.youtube.com/embed/${video.youtubeId}`}
             allowFullScreen
+            title={video.title}
           />
         </div>
 
         <h1 className="text-xl font-bold mt-4">{video.title}</h1>
 
-        <div className="flex justify-between mt-2">
-          <p className="text-sm text-gray-600">{video.views} views</p>
+        <div className="flex justify-between mt-2 items-center">
+          <p className="text-sm text-gray-600">
+            {formatNumber(video.views)} views
+          </p>
 
-          <button
-            onClick={handleLike}
-            className={`border px-3 py-1 rounded ${
-              liked ? "bg-gray-200" : ""
-            }`}
-          >
-            👍 {liked ? "Liked" : "Like"}
-          </button>
+          <div className="flex gap-3 items-center">
+            <button
+              onClick={handleLike}
+              className={`border px-3 py-1 rounded ${
+                liked ? "bg-gray-200" : ""
+              }`}
+            >
+              👍 {liked ? "Liked" : "Like"}
+            </button>
+
+            {/* OWNER CONTROLS */}
+            {isOwner && (
+              <>
+                <Link
+                  to={`/edit-video/${video.videoId}`}
+                  className="border px-3 py-1 rounded text-sm"
+                >
+                  Edit
+                </Link>
+
+                <button
+                  onClick={deleteVideo}
+                  className="border px-3 py-1 rounded text-sm text-red-600"
+                >
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        <div className="flex justify-between mt-4 border-t pt-4">
-          <div>
-            <p className="font-semibold">{video.channelName}</p>
-            <p className="text-sm text-gray-500">120K subscribers</p>
+        {/* ================= CHANNEL INFO ================= */}
+        <div className="flex justify-between mt-4 border-t pt-4 items-center">
+          <div className="flex gap-3 items-center">
+            <Link to={`/channel/${video.channelId}`}>
+              <img
+                src={video.channelAvatar}
+                alt={video.channelName}
+                className="w-12 h-12 rounded-full"
+              />
+            </Link>
+
+            <div>
+              <Link
+                to={`/channel/${video.channelId}`}
+                className="font-semibold hover:underline"
+              >
+                {video.channelName}
+              </Link>
+              <p className="text-sm text-gray-500">
+                {formatNumber(120000)} subscribers
+              </p>
+            </div>
           </div>
 
-          <button
-            onClick={handleSubscribe}
-            className="bg-black text-white px-4 py-2 rounded"
-          >
-            Subscribe
-          </button>
+          {!isOwner && (
+            <button
+              onClick={handleSubscribe}
+              className="bg-black text-white px-4 py-2 rounded"
+            >
+              Subscribe
+            </button>
+          )}
         </div>
 
         {/* ================= COMMENTS ================= */}
@@ -158,10 +210,9 @@ useEffect(() => {
           {loggedInUser && (
             <div className="flex gap-2 mb-4">
               <input
-                type="text"
-                placeholder="Add a comment..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Add a comment..."
                 className="flex-1 border px-3 py-2 rounded"
               />
               <button
@@ -173,44 +224,52 @@ useEffect(() => {
             </div>
           )}
 
-          <div className="space-y-3">
-            {comments.map((c) => (
-              <div key={c._id} className="border p-3 rounded">
-                <p className="font-semibold">{c.username}</p>
-                <p>{c.text}</p>
+          {comments.map((c) => (
+            <div key={c._id} className="border p-3 rounded mb-2">
+              <p className="font-semibold">{c.username}</p>
+              <p>{c.text}</p>
 
-                {loggedInUser === c.username && (
-                  <button
-                    onClick={() => deleteComment(c._id)}
-                    className="text-red-500 text-sm mt-1"
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
+              {loggedInUser?.name === c.username && (
+                <button
+                  onClick={() => deleteComment(c._id)}
+                  className="text-red-500 text-sm"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       {/* ================= UP NEXT ================= */}
       <aside className="w-80 overflow-y-auto">
         <h3 className="font-semibold mb-4">Up next</h3>
+
         {videos
           .filter((v) => v.videoId !== id)
           .map((v) => (
             <Link
               key={v.videoId}
               to={`/video/${v.videoId}`}
-              className="flex gap-3 mb-4"
+              className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded-lg"
             >
-              <div className="w-40 aspect-video bg-black rounded overflow-hidden">
+              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden">
                 <img
                   src={v.thumbnailUrl}
+                  alt={v.title}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p className="text-sm font-medium">{v.title}</p>
+
+              <div className="flex-1 h-24 flex flex-col justify-between">
+                <p className="text-sm font-medium line-clamp-2">
+                  {v.title}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {v.channelName}
+                </p>
+              </div>
             </Link>
           ))}
       </aside>
@@ -219,4 +278,5 @@ useEffect(() => {
 }
 
 export default VideoPlayer;
+
 

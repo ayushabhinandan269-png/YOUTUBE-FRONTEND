@@ -12,106 +12,46 @@ import Liked from "./pages/Liked";
 import Shorts from "./pages/Shorts";
 import VideoPlayer from "./pages/VideoPlayer";
 import Auth from "./pages/Auth";
-import Channel from "./pages/Channel"; // NEW
+import Channel from "./pages/Channel";
+import CreateChannel from "./pages/CreateChannel";
+import EditVideo from "./pages/EditVideo";
 
 function App() {
   const [search, setSearch] = useState("");
   const [user, setUser] = useState(null);
 
-  // ✅ Load user once on app start
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    if (storedUser) setUser(storedUser);
   }, []);
 
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* ================= AUTH (NO LAYOUT) ================= */}
+        {/* AUTH */}
         <Route path="/auth" element={<Auth setUser={setUser} />} />
 
-        {/* ================= HOME ================= */}
+        {/* LAYOUT */}
         <Route
-          path="/"
           element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Home search={search} />
-            </Layout>
+            <Layout user={user} search={search} setSearch={setSearch} />
           }
-        />
+        >
+          <Route path="/" element={<Home search={search} />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/shorts" element={<Shorts />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/liked" element={<Liked />} />
 
-        {/* ================= EXPLORE ================= */}
-        <Route
-          path="/explore"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Explore />
-            </Layout>
-          }
-        />
+          <Route path="/video/:id" element={<VideoPlayer />} />
+          <Route path="/channel/:channelId" element={<Channel />} />
 
-        {/* ================= SHORTS ================= */}
-        <Route
-          path="/shorts"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Shorts />
-            </Layout>
-          }
-        />
-
-        {/* ================= SUBSCRIPTIONS ================= */}
-        <Route
-          path="/subscriptions"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Subscriptions />
-            </Layout>
-          }
-        />
-
-        {/* ================= HISTORY ================= */}
-        <Route
-          path="/history"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <History />
-            </Layout>
-          }
-        />
-
-        {/* ================= LIKED VIDEOS ================= */}
-        <Route
-          path="/liked"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Liked />
-            </Layout>
-          }
-        />
-
-        {/* ================= CHANNEL PAGE ================= */}
-        <Route
-          path="/channel/:channelId"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <Channel />
-            </Layout>
-          }
-        />
-
-        {/* ================= VIDEO PLAYER ================= */}
-        <Route
-          path="/video/:id"
-          element={
-            <Layout user={user} search={search} setSearch={setSearch}>
-              <VideoPlayer />
-            </Layout>
-          }
-        />
+          {/* PROTECTED UI ROUTES */}
+          <Route path="/create-channel" element={<CreateChannel />} />
+          <Route path="/edit-video/:id" element={<EditVideo />} />
+        </Route>
 
       </Routes>
     </BrowserRouter>

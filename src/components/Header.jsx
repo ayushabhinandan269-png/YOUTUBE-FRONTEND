@@ -5,7 +5,6 @@ function Header({ onToggle, search, setSearch, user }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // for now just navigate home (Home filters by search)
     navigate("/");
   };
 
@@ -14,7 +13,13 @@ function Header({ onToggle, search, setSearch, user }) {
 
       {/* LEFT */}
       <div className="flex items-center gap-4">
-        <button onClick={onToggle} className="text-2xl">☰</button>
+        <button
+          onClick={onToggle}
+          className="text-2xl hover:bg-gray-100 p-1 rounded"
+        >
+          ☰
+        </button>
+
         <Link
           to="/"
           className="text-xl font-bold text-red-600 tracking-tight"
@@ -37,35 +42,20 @@ function Header({ onToggle, search, setSearch, user }) {
 
         <button
           type="submit"
-          className="px-5 py-2 border border-l-0 rounded-r-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+          className="px-5 py-2 border border-l-0 rounded-r-full bg-gray-100 hover:bg-gray-200"
         >
-          {/* SEARCH ICON */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.8}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m21 21-4.35-4.35m1.85-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-            />
-          </svg>
+          🔍
         </button>
       </form>
 
       {/* RIGHT */}
       {user ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <span className="font-medium">Hi, {user}</span>
 
           <button
             onClick={() => {
-              localStorage.removeItem("user");
-              localStorage.removeItem("token");
+              localStorage.clear();
               window.location.reload();
             }}
             className="px-4 py-1 border rounded-full text-sm hover:bg-gray-100"
@@ -86,3 +76,5 @@ function Header({ onToggle, search, setSearch, user }) {
 }
 
 export default Header;
+
+

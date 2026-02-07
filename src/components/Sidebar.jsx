@@ -14,7 +14,9 @@ import {
 function Sidebar({ isOpen }) {
   const [channels, setChannels] = useState([]);
 
-  // 🔐 SAFE USER PARSING
+  /* ================= AUTH ================= */
+  const token = localStorage.getItem("token");
+
   let user = null;
   try {
     user = JSON.parse(localStorage.getItem("user"));
@@ -22,11 +24,13 @@ function Sidebar({ isOpen }) {
     user = null;
   }
 
+  const channelId = user?.channel || null;
+
   const linkStyle = ({ isActive }) =>
     `flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 cursor-pointer
      ${isActive ? "bg-gray-200 font-medium" : ""}`;
 
-  /* ================= FETCH CHANNELS ================= */
+  /* ================= FETCH CHANNEL LIST ================= */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -35,7 +39,7 @@ function Sidebar({ isOpen }) {
         const res = await api.get("/channels");
         setChannels(res.data || []);
       } catch {
-        // safe ignore
+        setChannels([]);
       }
     };
 
@@ -93,22 +97,24 @@ function Sidebar({ isOpen }) {
         </NavLink>
 
         {/* YOUR CHANNEL */}
-        {user && (
+        {token && (
           <>
             <hr className="my-3" />
             <NavLink
-              to={user.channel ? `/channel/${user.channel}` : "/create-channel"}
+              to={channelId ? `/channel/${channelId}` : "/create-channel"}
               className={linkStyle}
             >
               <UserCircleIcon className="h-5 w-5" />
               {isOpen && (
-                <span>{user.channel ? "Your Channel" : "Create Channel"}</span>
+                <span>
+                  {channelId ? "Your Channel" : "Create Channel"}
+                </span>
               )}
             </NavLink>
           </>
         )}
 
-        {/* CHANNEL LIST */}
+        {/* DISCOVER CHANNELS */}
         {isOpen && (
           <>
             <hr className="my-3" />
@@ -142,6 +148,7 @@ function Sidebar({ isOpen }) {
 }
 
 export default Sidebar;
+
 
 
 
