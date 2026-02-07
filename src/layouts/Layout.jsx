@@ -6,12 +6,14 @@ import Sidebar from "../components/Sidebar";
 function Layout({ user, search, setSearch }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const closeSidebar = () => setIsSidebarOpen(false);
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
 
       {/* HEADER */}
       <Header
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        onToggle={() => setIsSidebarOpen((prev) => !prev)}
         search={search}
         setSearch={setSearch}
         user={user}
@@ -20,16 +22,11 @@ function Layout({ user, search, setSearch }) {
       {/* BODY */}
       <div className="flex flex-1 pt-16 relative">
 
-        {/* MOBILE OVERLAY */}
-        {isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/40 z-30 md:hidden"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-
         {/* SIDEBAR */}
-        <Sidebar isOpen={isSidebarOpen} />
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={closeSidebar}
+        />
 
         {/* MAIN CONTENT */}
         <main className="flex-1 overflow-y-auto bg-white relative z-20">
@@ -43,4 +40,5 @@ function Layout({ user, search, setSearch }) {
 }
 
 export default Layout;
+
 

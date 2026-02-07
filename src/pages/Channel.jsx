@@ -44,13 +44,11 @@ function Channel() {
     {
       id: "p1",
       title: "Full Course",
-      description: "Complete learning series",
       videos: channelVideos.slice(0, 4),
     },
     {
       id: "p2",
       title: "Popular Uploads",
-      description: "Most watched videos",
       videos: [...channelVideos]
         .sort((a, b) => b.views - a.views)
         .slice(0, 4),
@@ -61,56 +59,73 @@ function Channel() {
     <div className="pb-16">
 
       {/* ================= BANNER ================= */}
-      <div className="w-full h-52 bg-gray-200">
+      <div className="w-full h-36 sm:h-52 bg-gray-200">
         {channel.banner && (
           <img
             src={channel.banner}
-            className="w-full h-full object-cover"
             alt="Channel banner"
+            className="w-full h-full object-cover"
           />
         )}
       </div>
 
       {/* ================= HEADER ================= */}
-      <div className="px-6 -mt-12 bg-white rounded-xl shadow p-6 flex gap-6 items-center">
-        <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold">
-          {channel.channelName[0]}
-        </div>
+      <div className="px-4 sm:px-6 -mt-12">
+        <div className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center">
 
-        <div>
-          <h1 className="text-2xl font-bold">{channel.channelName}</h1>
-          <p className="text-sm text-gray-600">
-            {formatNumber(channel.subscribers)} subscribers
-          </p>
+          {/* AVATAR */}
+          <div className="w-24 h-24 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center text-3xl font-bold">
+            {channel.avatar ? (
+              <img
+                src={channel.avatar}
+                alt={channel.channelName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              channel.channelName[0]
+            )}
+          </div>
+
+          {/* INFO */}
+          <div className="text-center sm:text-left">
+            <h1 className="text-xl sm:text-2xl font-bold">
+              {channel.channelName}
+            </h1>
+            <p className="text-sm text-gray-600">
+              {formatNumber(channel.subscribers)} subscribers
+            </p>
+          </div>
         </div>
       </div>
 
       {/* ================= TABS ================= */}
-      <div className="px-6 mt-8 border-b flex gap-8">
-        {["videos", "playlists", "about"].map((t) => (
-          <button
-            key={t}
-            onClick={() => setActiveTab(t)}
-            className={`pb-3 capitalize ${
-              activeTab === t
-                ? "border-b-2 border-black font-medium"
-                : "text-gray-500"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
+      <div className="px-4 sm:px-6 mt-6 border-b overflow-x-auto">
+        <div className="flex gap-6 whitespace-nowrap">
+          {["videos", "playlists", "about"].map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveTab(t)}
+              className={`pb-3 capitalize ${
+                activeTab === t
+                  ? "border-b-2 border-black font-medium"
+                  : "text-gray-500"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ================= CONTENT ================= */}
-      <div className="px-6 mt-8">
+      <div className="px-4 sm:px-6 mt-8">
 
         {/* VIDEOS */}
         {activeTab === "videos" && (
           channelVideos.length === 0 ? (
             <p className="text-gray-500">No videos uploaded yet</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {channelVideos.map((v) => (
                 <Link key={v._id} to={`/video/${v.videoId}`}>
                   <img
@@ -118,7 +133,9 @@ function Channel() {
                     className="rounded-lg"
                     alt={v.title}
                   />
-                  <p className="font-semibold mt-2">{v.title}</p>
+                  <p className="font-semibold mt-2 line-clamp-2">
+                    {v.title}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -127,7 +144,7 @@ function Channel() {
 
         {/* PLAYLISTS */}
         {activeTab === "playlists" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
             {playlists.map((p) => (
               <div key={p.id}>
                 {p.videos[0] && (
@@ -148,7 +165,7 @@ function Channel() {
 
         {/* ABOUT */}
         {activeTab === "about" && (
-          <div className="max-w-2xl space-y-2">
+          <div className="max-w-2xl space-y-2 text-sm">
             <p><b>Category:</b> {channel.category || "General"}</p>
             <p><b>Created:</b> {new Date(channel.createdAt).toDateString()}</p>
             <p><b>Total videos:</b> {channelVideos.length}</p>
@@ -161,6 +178,7 @@ function Channel() {
 }
 
 export default Channel;
+
 
 
 
