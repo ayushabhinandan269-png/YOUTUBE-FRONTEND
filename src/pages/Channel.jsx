@@ -59,31 +59,23 @@ function Channel() {
     <div className="pb-16">
 
       {/* ================= BANNER ================= */}
-      <div className="w-full h-36 sm:h-52 bg-gray-200">
+      <div className="w-full h-32 sm:h-44 md:h-52 bg-gray-200">
         {channel.banner && (
           <img
             src={channel.banner}
-            alt="Channel banner"
             className="w-full h-full object-cover"
+            alt="Channel banner"
           />
         )}
       </div>
 
       {/* ================= HEADER ================= */}
-      <div className="px-4 sm:px-6 -mt-12">
-        <div className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center">
+      <div className="px-4 sm:px-6 -mt-10 sm:-mt-12">
+        <div className="bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start">
 
           {/* AVATAR */}
-          <div className="w-24 h-24 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center text-3xl font-bold">
-            {channel.avatar ? (
-              <img
-                src={channel.avatar}
-                alt={channel.channelName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              channel.channelName[0]
-            )}
+          <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold shrink-0">
+            {channel.channelName[0]}
           </div>
 
           {/* INFO */}
@@ -99,13 +91,13 @@ function Channel() {
       </div>
 
       {/* ================= TABS ================= */}
-      <div className="px-4 sm:px-6 mt-6 border-b overflow-x-auto">
-        <div className="flex gap-6 whitespace-nowrap">
+      <div className="mt-6 border-b overflow-x-auto">
+        <div className="flex gap-6 px-4 sm:px-6 text-sm whitespace-nowrap">
           {["videos", "playlists", "about"].map((t) => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`pb-3 capitalize ${
+              className={`pb-3 capitalize transition ${
                 activeTab === t
                   ? "border-b-2 border-black font-medium"
                   : "text-gray-500"
@@ -118,19 +110,19 @@ function Channel() {
       </div>
 
       {/* ================= CONTENT ================= */}
-      <div className="px-4 sm:px-6 mt-8">
+      <div className="px-4 sm:px-6 mt-6">
 
         {/* VIDEOS */}
         {activeTab === "videos" && (
           channelVideos.length === 0 ? (
             <p className="text-gray-500">No videos uploaded yet</p>
           ) : (
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {channelVideos.map((v) => (
                 <Link key={v._id} to={`/video/${v.videoId}`}>
                   <img
                     src={v.thumbnailUrl}
-                    className="rounded-lg"
+                    className="rounded-lg w-full"
                     alt={v.title}
                   />
                   <p className="font-semibold mt-2 line-clamp-2">
@@ -144,13 +136,13 @@ function Channel() {
 
         {/* PLAYLISTS */}
         {activeTab === "playlists" && (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {playlists.map((p) => (
               <div key={p.id}>
                 {p.videos[0] && (
                   <img
                     src={p.videos[0].thumbnailUrl}
-                    className="rounded-lg"
+                    className="rounded-lg w-full"
                     alt={p.title}
                   />
                 )}
@@ -165,7 +157,7 @@ function Channel() {
 
         {/* ABOUT */}
         {activeTab === "about" && (
-          <div className="max-w-2xl space-y-2 text-sm">
+          <div className="max-w-2xl space-y-2 text-sm sm:text-base">
             <p><b>Category:</b> {channel.category || "General"}</p>
             <p><b>Created:</b> {new Date(channel.createdAt).toDateString()}</p>
             <p><b>Total videos:</b> {channelVideos.length}</p>
