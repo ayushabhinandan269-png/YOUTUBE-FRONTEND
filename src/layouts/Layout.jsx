@@ -9,7 +9,8 @@ function Layout({ user, search, setSearch }) {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    /* ✅ FIX: allow page to grow */
+    <div className="min-h-screen flex flex-col">
 
       {/* HEADER */}
       <Header
@@ -28,17 +29,19 @@ function Layout({ user, search, setSearch }) {
           onClose={closeSidebar}
         />
 
-        {/* MAIN CONTENT */}
+        {/* MAIN CONTENT (SCROLLS) */}
         <main className="flex-1 overflow-y-auto bg-white relative z-20">
-          <div className="px-3 sm:px-4 md:px-6 py-4">
+          <div className="px-3 sm:px-4 md:px-6 py-4 min-h-full">
             <Outlet />
           </div>
         </main>
+
       </div>
     </div>
   );
 }
 
 export default Layout;
+
 
 

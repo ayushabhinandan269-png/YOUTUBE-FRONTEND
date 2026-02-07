@@ -1,20 +1,35 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { videos } from "../data/videos";
 import api from "../services/api";
 import { formatNumber } from "../utils/formatNumber";
 
+/* ================= SAMPLE COMMENTS ================= */
+const SAMPLE_COMMENTS = [
+  {
+    _id: "s1",
+    username: "Rohit Sharma",
+    text: "Very clear explanation, thanks for this video 🙌",
+    likes: 4,
+  },
+  {
+    _id: "s2",
+    username: "Ananya Gupta",
+    text: "This helped me understand React Hooks much better!",
+    likes: 2,
+  },
+];
+
 function VideoPlayer() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const video = videos.find((v) => v.videoId === id);
 
-  const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [videoLiked, setVideoLiked] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
 
   const token = localStorage.getItem("token");
-  const myChannelId = localStorage.getItem("channelId");
 
   let loggedInUser = null;
   try {
@@ -25,70 +40,55 @@ function VideoPlayer() {
 
   if (!video) return <p className="p-6">Video not found</p>;
 
-  const isOwner = myChannelId === video.channelId;
-
-  /* ================= SAVE WATCH HISTORY ================= */
-  useEffect(() => {
-    if (!token) return;
-    api.post(`/user/history/${id}`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {});
-  }, [id, token]);
-
   /* ================= FETCH COMMENTS ================= */
   useEffect(() => {
-    api.get(`/comments/${id}`)
-      .then((res) => setComments(res.data))
-      .catch(() => {});
+    api
+      .get(`/comments/${id}`)
+      .then((res) =>
+        setComments(res.data?.length ? res.data : SAMPLE_COMMENTS)
+      )
+      .catch(() => setComments(SAMPLE_COMMENTS));
   }, [id]);
 
-  const handleLike = async () => {
+  /* ================= VIDEO LIKE ================= */
+  const toggleVideoLike = () => {
     if (!token) return alert("Login required");
-    try {
-      const res = await api.post(`/user/like/${id}`);
-      setLiked(res.data.liked);
-    } catch {}
+    setVideoLiked((prev) => !prev);
   };
 
-  const handleSubscribe = async () => {
+  /* ================= SUBSCRIBE ================= */
+  const toggleSubscribe = () => {
     if (!token) return alert("Login required");
-    try {
-      await api.post(`/user/subscribe/${video.channelId}`);
-      alert("Subscribed 🔔");
-    } catch {}
+    setSubscribed((prev) => !prev);
   };
 
-  const addComment = async () => {
+  /* ================= ADD COMMENT ================= */
+  const addComment = () => {
     if (!token || !commentText.trim()) return;
-    try {
-      const res = await api.post(`/comments/${id}`, {
-        text: commentText,
-        username: loggedInUser?.name || "User",
-      });
-      setComments([res.data, ...comments]);
-      setCommentText("");
-    } catch {}
+
+    const newComment = {
+      _id: Date.now().toString(),
+      username: loggedInUser?.name || "You",
+      text: commentText,
+      likes: 0,
+    };
+
+    setComments([newComment, ...comments]);
+    setCommentText("");
   };
 
-  const deleteComment = async (commentId) => {
-    try {
-      await api.delete(`/comments/${commentId}`);
-      setComments(comments.filter((c) => c._id !== commentId));
-    } catch {
-      alert("Not authorized");
-    }
+  /* ================= LIKE COMMENT ================= */
+  const likeComment = (commentId) => {
+    setComments((prev) =>
+      prev.map((c) =>
+        c._id === commentId ? { ...c, likes: c.likes + 1 } : c
+      )
+    );
   };
 
-  const deleteVideo = async () => {
-    if (!window.confirm("Delete this video?")) return;
-    try {
-      await api.delete(`/videos/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      navigate(`/channel/${video.channelId}`);
-    } catch {
-      alert("Delete failed");
-    }
+  /* ================= DELETE COMMENT ================= */
+  const deleteComment = (commentId) => {
+    setComments((prev) => prev.filter((c) => c._id !== commentId));
   };
 
   return (
@@ -107,113 +107,114 @@ function VideoPlayer() {
           />
         </div>
 
+        {/* TITLE */}
         <h1 className="text-lg sm:text-xl font-bold mt-4">
           {video.title}
         </h1>
 
-        {/* ACTIONS */}
-        <div className="flex flex-wrap justify-between gap-3 mt-2 items-center">
+        {/* VIEWS + ACTIONS */}
+        <div className="flex justify-between items-center mt-2">
           <p className="text-sm text-gray-600">
             {formatNumber(video.views)} views
           </p>
 
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-3">
             <button
-              onClick={handleLike}
-              className={`border px-3 py-1 rounded ${
-                liked ? "bg-gray-200" : ""
+              onClick={toggleVideoLike}
+              className={`border px-4 py-1 rounded ${
+                videoLiked ? "bg-gray-200" : ""
               }`}
             >
-              👍 {liked ? "Liked" : "Like"}
+              👍 {videoLiked ? "Liked" : "Like"}
             </button>
 
-            {isOwner && (
-              <>
-                <Link
-                  to={`/edit-video/${video.videoId}`}
-                  className="border px-3 py-1 rounded text-sm"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={deleteVideo}
-                  className="border px-3 py-1 rounded text-sm text-red-600"
-                >
-                  Delete
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* CHANNEL INFO */}
-        <div className="flex justify-between items-center mt-4 border-t pt-4">
-          <div className="flex gap-3 items-center">
-            <Link to={`/channel/${video.channelId}`}>
-              <img
-                src={video.channelAvatar}
-                alt={video.channelName}
-                className="w-12 h-12 rounded-full"
-              />
-            </Link>
-
-            <div>
-              <Link
-                to={`/channel/${video.channelId}`}
-                className="font-semibold hover:underline"
-              >
-                {video.channelName}
-              </Link>
-              <p className="text-sm text-gray-500">
-                {formatNumber(120000)} subscribers
-              </p>
-            </div>
-          </div>
-
-          {!isOwner && (
             <button
-              onClick={handleSubscribe}
-              className="bg-black text-white px-4 py-2 rounded"
+              onClick={toggleSubscribe}
+              className={`px-4 py-1 rounded text-white ${
+                subscribed ? "bg-gray-600" : "bg-black"
+              }`}
             >
-              Subscribe
+              {subscribed ? "Subscribed" : "Subscribe"}
             </button>
-          )}
+          </div>
         </div>
 
-        {/* COMMENTS */}
+        {/* ================= COMMENTS ================= */}
         <div className="mt-6">
-          <h3 className="font-semibold mb-3">Comments</h3>
+          <h3 className="font-semibold mb-4">
+            Comments ({comments.length})
+          </h3>
 
-          {loggedInUser && (
-            <div className="flex gap-2 mb-4">
-              <input
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add a comment..."
-                className="flex-1 border px-3 py-2 rounded"
-              />
-              <button
-                onClick={addComment}
-                className="bg-blue-600 text-white px-4 rounded"
-              >
-                Comment
-              </button>
+          {/* COMMENT BAR */}
+          {token && (
+            <div className="flex gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold">
+                {(loggedInUser?.name || "U")[0]}
+              </div>
+
+              <div className="flex-1">
+                <input
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Add a comment..."
+                  className="w-full border-b outline-none py-2 text-sm focus:border-black"
+                />
+
+                <div className="flex justify-end gap-3 mt-2">
+                  <button
+                    onClick={() => setCommentText("")}
+                    className="text-sm text-gray-600"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={addComment}
+                    disabled={!commentText.trim()}
+                    className={`px-4 py-1 rounded text-sm text-white ${
+                      commentText.trim()
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    Comment
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
+          {/* COMMENTS LIST */}
           {comments.map((c) => (
-            <div key={c._id} className="border p-3 rounded mb-2">
-              <p className="font-semibold">{c.username}</p>
-              <p>{c.text}</p>
+            <div key={c._id} className="flex gap-3 mb-4">
 
-              {loggedInUser?.name === c.username && (
-                <button
-                  onClick={() => deleteComment(c._id)}
-                  className="text-red-500 text-sm"
-                >
-                  Delete
-                </button>
-              )}
+              <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">
+                {c.username[0]}
+              </div>
+
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{c.username}</p>
+                <p className="text-sm mt-1">{c.text}</p>
+
+                <div className="flex gap-4 text-xs mt-2 text-gray-600 items-center">
+                  <button
+                    onClick={() => likeComment(c._id)}
+                    className="hover:text-black"
+                  >
+                    👍 {c.likes}
+                  </button>
+
+                  {/* DELETE — ONLY OWN COMMENT */}
+                  {loggedInUser?.name === c.username && (
+                    <button
+                      onClick={() => deleteComment(c._id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -231,7 +232,7 @@ function VideoPlayer() {
               to={`/video/${v.videoId}`}
               className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded-lg"
             >
-              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden shrink-0">
+              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden">
                 <img
                   src={v.thumbnailUrl}
                   alt={v.title}
@@ -239,7 +240,7 @@ function VideoPlayer() {
                 />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between">
+              <div>
                 <p className="text-sm font-medium line-clamp-2">
                   {v.title}
                 </p>
@@ -255,5 +256,12 @@ function VideoPlayer() {
 }
 
 export default VideoPlayer;
+
+
+
+
+
+
+
 
 

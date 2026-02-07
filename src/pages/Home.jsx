@@ -24,20 +24,11 @@ function Home({ search }) {
   });
 
   return (
-    <div className="flex-1 px-3 sm:px-6 pt-3 pb-10">
+    /* ✅ KEY FIX: allow page to grow so Layout can scroll */
+    <div className="min-h-full px-3 sm:px-4 md:px-6 pt-4 pb-10">
 
-      {/* ================= FILTER BAR ================= */}
-      <div className="
-        sticky top-16 z-20
-        bg-white
-        -mx-3 sm:-mx-6
-        px-3 sm:px-6
-        py-3
-        mb-4
-        flex gap-3
-        overflow-x-auto
-        scrollbar-hide
-      ">
+      {/* ================= FILTER BAR (HORIZONTAL SCROLL) ================= */}
+      <div className="flex gap-3 mb-5 overflow-x-auto scrollbar-hide">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -56,25 +47,9 @@ function Home({ search }) {
 
       {/* ================= VIDEO GRID ================= */}
       {filteredVideos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center mt-20 text-center">
-          <p className="text-gray-500 text-lg font-medium">
-            No videos found
-          </p>
-          <p className="text-sm text-gray-400 mt-1">
-            Try a different search or category
-          </p>
-        </div>
+        <p className="text-gray-500 mt-10">No videos found</p>
       ) : (
-        <div
-          className="
-            grid gap-x-4 gap-y-8
-            grid-cols-1
-            sm:grid-cols-2
-            md:grid-cols-3
-            lg:grid-cols-4
-            xl:grid-cols-5
-          "
-        >
+        <div className="grid gap-x-4 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filteredVideos.map((video) => (
             <div key={video.videoId} className="group">
 
@@ -89,10 +64,10 @@ function Home({ search }) {
                 </div>
               </Link>
 
-              {/* Info */}
+              {/* Video Info */}
               <div className="mt-3 flex gap-3">
 
-                {/* Avatar */}
+                {/* Channel Avatar */}
                 <Link to={`/channel/${video.channelId}`}>
                   <img
                     src={video.channelAvatar}
@@ -102,19 +77,23 @@ function Home({ search }) {
                 </Link>
 
                 <div className="min-w-0">
+
+                  {/* Title */}
                   <Link to={`/video/${video.videoId}`}>
                     <h3 className="text-sm font-semibold leading-snug line-clamp-2">
                       {video.title}
                     </h3>
                   </Link>
 
+                  {/* Channel Name */}
                   <Link
                     to={`/channel/${video.channelId}`}
-                    className="text-xs text-gray-600 mt-1 hover:underline block truncate"
+                    className="text-xs text-gray-600 mt-1 hover:underline block"
                   >
                     {video.channelName}
                   </Link>
 
+                  {/* Views */}
                   <p className="text-xs text-gray-500">
                     {formatNumber(video.views)} views
                   </p>
@@ -130,6 +109,7 @@ function Home({ search }) {
 }
 
 export default Home;
+
 
 
 
