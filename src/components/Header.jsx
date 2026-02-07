@@ -9,29 +9,29 @@ function Header({ onToggle, search, setSearch, user }) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 border-b bg-white">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 md:px-6 py-3 border-b bg-white">
 
-      {/* LEFT */}
-      <div className="flex items-center gap-4">
+      {/* ================= LEFT ================= */}
+      <div className="flex items-center gap-3">
         <button
           onClick={onToggle}
-          className="text-2xl hover:bg-gray-100 p-1 rounded"
+          className="text-2xl hover:bg-gray-100 p-2 rounded-md"
         >
           ☰
         </button>
 
         <Link
           to="/"
-          className="text-xl font-bold text-red-600 tracking-tight"
+          className="text-lg md:text-xl font-bold text-red-600 tracking-tight"
         >
           YouTube
         </Link>
       </div>
 
-      {/* CENTER SEARCH */}
+      {/* ================= CENTER SEARCH (DESKTOP) ================= */}
       <form
         onSubmit={handleSearch}
-        className="flex items-center w-130"
+        className="hidden md:flex items-center w-125"
       >
         <input
           value={search}
@@ -48,33 +48,47 @@ function Header({ onToggle, search, setSearch, user }) {
         </button>
       </form>
 
-      {/* RIGHT */}
-      {user ? (
-        <div className="flex items-center gap-4">
-          <span className="font-medium">Hi, {user}</span>
+      {/* ================= RIGHT ================= */}
+      <div className="flex items-center gap-3">
 
-          <button
-            onClick={() => {
-              localStorage.clear();
-              window.location.reload();
-            }}
-            className="px-4 py-1 border rounded-full text-sm hover:bg-gray-100"
-          >
-            Logout
-          </button>
-        </div>
-      ) : (
-        <Link
-          to="/auth"
-          className="px-5 py-2 border rounded-full font-medium hover:bg-gray-100"
+        {/* Mobile search icon */}
+        <button
+          onClick={() => navigate("/")}
+          className="md:hidden p-2 rounded-full hover:bg-gray-100"
         >
-          Sign In
-        </Link>
-      )}
+          🔍
+        </button>
+
+        {user ? (
+          <>
+            <span className="hidden sm:block text-sm font-medium">
+              Hi, {user}
+            </span>
+
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+              className="px-3 py-1 border rounded-full text-sm hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link
+            to="/auth"
+            className="px-4 py-1.5 border rounded-full text-sm font-medium hover:bg-gray-100"
+          >
+            Sign In
+          </Link>
+        )}
+      </div>
     </header>
   );
 }
 
 export default Header;
+
 
 

@@ -11,7 +11,7 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
-function Sidebar({ isOpen }) {
+function Sidebar({ isOpen, onClose }) {
   const [channels, setChannels] = useState([]);
 
   /* ================= AUTH ================= */
@@ -47,107 +47,116 @@ function Sidebar({ isOpen }) {
   }, [isOpen]);
 
   return (
-    <aside
-      className={`
-        fixed md:static
-        top-16 left-0
-        h-[calc(100vh-64px)]
-        bg-white
-        border-r
-        transition-all duration-300
-        ${isOpen ? "w-56" : "w-16"}
-        z-40
-        overflow-y-auto
-      `}
-    >
-      <ul className="p-3 space-y-1 text-sm">
+    <>
+      {/* ================= OVERLAY (MOBILE) ================= */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+        />
+      )}
 
-        {/* MAIN */}
-        <NavLink to="/" className={linkStyle}>
-          <HomeIcon className="h-5 w-5" />
-          {isOpen && <span>Home</span>}
-        </NavLink>
+      {/* ================= SIDEBAR ================= */}
+      <aside
+        className={`
+          fixed md:static
+          top-16 left-0
+          h-[calc(100vh-64px)]
+          bg-white
+          border-r
+          z-40
+          overflow-y-auto
+          transition-transform duration-300
+          w-56
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
+      >
+        <ul className="p-3 space-y-1 text-sm">
 
-        <NavLink to="/explore" className={linkStyle}>
-          <FireIcon className="h-5 w-5" />
-          {isOpen && <span>Explore</span>}
-        </NavLink>
+          {/* ================= MAIN ================= */}
+          <NavLink to="/" className={linkStyle} onClick={onClose}>
+            <HomeIcon className="h-5 w-5" />
+            <span>Home</span>
+          </NavLink>
 
-        <NavLink to="/shorts" className={linkStyle}>
-          <PlayIcon className="h-5 w-5" />
-          {isOpen && <span>Shorts</span>}
-        </NavLink>
+          <NavLink to="/explore" className={linkStyle} onClick={onClose}>
+            <FireIcon className="h-5 w-5" />
+            <span>Explore</span>
+          </NavLink>
 
-        <NavLink to="/subscriptions" className={linkStyle}>
-          <RectangleStackIcon className="h-5 w-5" />
-          {isOpen && <span>Subscriptions</span>}
-        </NavLink>
+          <NavLink to="/shorts" className={linkStyle} onClick={onClose}>
+            <PlayIcon className="h-5 w-5" />
+            <span>Shorts</span>
+          </NavLink>
 
-        <hr className="my-3" />
+          <NavLink to="/subscriptions" className={linkStyle} onClick={onClose}>
+            <RectangleStackIcon className="h-5 w-5" />
+            <span>Subscriptions</span>
+          </NavLink>
 
-        {/* USER */}
-        <NavLink to="/history" className={linkStyle}>
-          <ClockIcon className="h-5 w-5" />
-          {isOpen && <span>History</span>}
-        </NavLink>
+          <hr className="my-3" />
 
-        <NavLink to="/liked" className={linkStyle}>
-          <HandThumbUpIcon className="h-5 w-5" />
-          {isOpen && <span>Liked Videos</span>}
-        </NavLink>
+          {/* ================= USER ================= */}
+          <NavLink to="/history" className={linkStyle} onClick={onClose}>
+            <ClockIcon className="h-5 w-5" />
+            <span>History</span>
+          </NavLink>
 
-        {/* YOUR CHANNEL */}
-        {token && (
-          <>
-            <hr className="my-3" />
-            <NavLink
-              to={channelId ? `/channel/${channelId}` : "/create-channel"}
-              className={linkStyle}
-            >
-              <UserCircleIcon className="h-5 w-5" />
-              {isOpen && (
+          <NavLink to="/liked" className={linkStyle} onClick={onClose}>
+            <HandThumbUpIcon className="h-5 w-5" />
+            <span>Liked Videos</span>
+          </NavLink>
+
+          {/* ================= YOUR CHANNEL ================= */}
+          {token && (
+            <>
+              <hr className="my-3" />
+              <NavLink
+                to={channelId ? `/channel/${channelId}` : "/create-channel"}
+                className={linkStyle}
+                onClick={onClose}
+              >
+                <UserCircleIcon className="h-5 w-5" />
                 <span>
                   {channelId ? "Your Channel" : "Create Channel"}
                 </span>
-              )}
-            </NavLink>
-          </>
-        )}
+              </NavLink>
+            </>
+          )}
 
-        {/* DISCOVER CHANNELS */}
-        {isOpen && (
-          <>
-            <hr className="my-3" />
-            <p className="px-2 text-xs text-gray-400">
-              More from YouTube
+          {/* ================= DISCOVER CHANNELS ================= */}
+          <hr className="my-3" />
+          <p className="px-2 text-xs text-gray-400">
+            More from YouTube
+          </p>
+
+          {channels.length > 0 ? (
+            channels.map((channel) => (
+              <NavLink
+                key={channel._id}
+                to={`/channel/${channel._id}`}
+                className={linkStyle}
+                onClick={onClose}
+              >
+                <PlayIcon className="h-5 w-5" />
+                <span className="truncate">
+                  {channel.channelName}
+                </span>
+              </NavLink>
+            ))
+          ) : (
+            <p className="px-2 py-2 text-xs text-gray-400">
+              No channels available
             </p>
-
-            {channels.length > 0 ? (
-              channels.map((channel) => (
-                <NavLink
-                  key={channel._id}
-                  to={`/channel/${channel._id}`}
-                  className={linkStyle}
-                >
-                  <PlayIcon className="h-5 w-5" />
-                  <span className="truncate">
-                    {channel.channelName}
-                  </span>
-                </NavLink>
-              ))
-            ) : (
-              <p className="px-2 py-2 text-xs text-gray-400">
-                No channels available
-              </p>
-            )}
-          </>
-        )}
-      </ul>
-    </aside>
+          )}
+        </ul>
+      </aside>
+    </>
   );
 }
 
 export default Sidebar;
+
 
 
 
