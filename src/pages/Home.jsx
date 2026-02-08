@@ -24,10 +24,10 @@ function Home({ search }) {
   });
 
   return (
-    /* ✅ KEY FIX: allow page to grow so Layout can scroll */
-    <div className="min-h-full px-3 sm:px-4 md:px-6 pt-4 pb-10">
+    /* ✅ MAKE HOME SCROLLABLE */
+    <div className="h-[calc(100vh-4rem)] overflow-y-auto px-3 sm:px-4 md:px-6 pt-4 pb-10">
 
-      {/* ================= FILTER BAR (HORIZONTAL SCROLL) ================= */}
+      {/* ================= FILTER BAR ================= */}
       <div className="flex gap-3 mb-5 overflow-x-auto scrollbar-hide">
         {categories.map((cat) => (
           <button
@@ -109,6 +109,7 @@ function Home({ search }) {
 }
 
 export default Home;
+
 
 
 

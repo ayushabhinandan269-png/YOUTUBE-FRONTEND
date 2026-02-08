@@ -92,13 +92,14 @@ function VideoPlayer() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 py-4">
+    /* PAGE HEIGHT LOCKED — BOTH SIDES SCROLL */
+    <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 py-4 h-[calc(100vh-4rem)]">
 
-      {/* ================= MAIN ================= */}
-      <div className="flex-1">
+      {/* ================= LEFT: VIDEO + COMMENTS ================= */}
+      <div className="flex-1 min-w-0 overflow-y-auto pr-2">
 
         {/* VIDEO */}
-        <div className="w-full aspect-video bg-black rounded overflow-hidden">
+        <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
           <iframe
             className="w-full h-full"
             src={`https://www.youtube.com/embed/${video.youtubeId}`}
@@ -113,7 +114,7 @@ function VideoPlayer() {
         </h1>
 
         {/* VIEWS + ACTIONS */}
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex justify-between items-center mt-2 flex-wrap gap-3">
           <p className="text-sm text-gray-600">
             {formatNumber(video.views)} views
           </p>
@@ -145,7 +146,6 @@ function VideoPlayer() {
             Comments ({comments.length})
           </h3>
 
-          {/* COMMENT BAR */}
           {token && (
             <div className="flex gap-3 mb-6">
               <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-semibold">
@@ -184,10 +184,8 @@ function VideoPlayer() {
             </div>
           )}
 
-          {/* COMMENTS LIST */}
           {comments.map((c) => (
             <div key={c._id} className="flex gap-3 mb-4">
-
               <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-sm font-semibold">
                 {c.username[0]}
               </div>
@@ -197,14 +195,10 @@ function VideoPlayer() {
                 <p className="text-sm mt-1">{c.text}</p>
 
                 <div className="flex gap-4 text-xs mt-2 text-gray-600 items-center">
-                  <button
-                    onClick={() => likeComment(c._id)}
-                    className="hover:text-black"
-                  >
+                  <button onClick={() => likeComment(c._id)}>
                     👍 {c.likes}
                   </button>
 
-                  {/* DELETE — ONLY OWN COMMENT */}
                   {loggedInUser?.name === c.username && (
                     <button
                       onClick={() => deleteComment(c._id)}
@@ -220,8 +214,8 @@ function VideoPlayer() {
         </div>
       </div>
 
-      {/* ================= UP NEXT ================= */}
-      <aside className="w-full lg:w-80">
+      {/* ================= RIGHT: UP NEXT (EVEN SIZE + SCROLL) ================= */}
+      <aside className="w-full lg:w-80 shrink-0 overflow-y-auto pl-2">
         <h3 className="font-semibold mb-4">Up next</h3>
 
         {videos
@@ -230,9 +224,10 @@ function VideoPlayer() {
             <Link
               key={v.videoId}
               to={`/video/${v.videoId}`}
-              className="flex gap-3 mb-4 hover:bg-gray-100 p-2 rounded-lg"
+              className="flex gap-3 mb-3 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-150"
             >
-              <div className="w-40 h-24 bg-black rounded-lg overflow-hidden">
+              {/* THUMBNAIL */}
+              <div className="w-40 h-24 shrink-0 bg-black rounded-lg overflow-hidden">
                 <img
                   src={v.thumbnailUrl}
                   alt={v.title}
@@ -240,10 +235,12 @@ function VideoPlayer() {
                 />
               </div>
 
-              <div>
-                <p className="text-sm font-medium line-clamp-2">
+              {/* TEXT (FIXED HEIGHT) */}
+              <div className="flex flex-col justify-between h-24 overflow-hidden">
+                <p className="text-sm font-medium leading-snug line-clamp-2">
                   {v.title}
                 </p>
+
                 <p className="text-xs text-gray-500">
                   {v.channelName}
                 </p>
@@ -256,6 +253,10 @@ function VideoPlayer() {
 }
 
 export default VideoPlayer;
+
+
+
+
 
 
 

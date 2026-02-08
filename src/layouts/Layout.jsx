@@ -9,10 +9,10 @@ function Layout({ user, search, setSearch }) {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    /* ✅ FIX: allow page to grow */
-    <div className="min-h-screen flex flex-col">
+    /* Page height locked */
+    <div className="h-screen overflow-hidden">
 
-      {/* HEADER */}
+      {/* FIXED HEADER */}
       <Header
         onToggle={() => setIsSidebarOpen((prev) => !prev)}
         search={search}
@@ -20,20 +20,18 @@ function Layout({ user, search, setSearch }) {
         user={user}
       />
 
-      {/* BODY */}
-      <div className="flex flex-1 pt-16 relative">
+      {/* BODY BELOW HEADER */}
+      <div className="pt-16 h-full flex">
 
-        {/* SIDEBAR */}
+        {/* SIDEBAR (LEFT NAV) */}
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={closeSidebar}
         />
 
-        {/* MAIN CONTENT (SCROLLS) */}
-        <main className="flex-1 overflow-y-auto bg-white relative z-20">
-          <div className="px-3 sm:px-4 md:px-6 py-4 min-h-full">
-            <Outlet />
-          </div>
+        {/* MAIN AREA */}
+        <main className="flex-1 bg-white">
+          <Outlet />
         </main>
 
       </div>
@@ -42,6 +40,9 @@ function Layout({ user, search, setSearch }) {
 }
 
 export default Layout;
+
+
+
 
 
 
