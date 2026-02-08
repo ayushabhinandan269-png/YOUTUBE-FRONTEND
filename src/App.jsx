@@ -12,11 +12,11 @@ import Liked from "./pages/Liked";
 import Shorts from "./pages/Shorts";
 import VideoPlayer from "./pages/VideoPlayer";
 import Auth from "./pages/Auth";
-import Channel from "./pages/Channel";
 import CreateChannel from "./pages/CreateChannel";
 import EditVideo from "./pages/EditVideo";
 import EditChannel from "./pages/EditChannel";
 import CreateVideo from "./pages/CreateVideo";
+import ChannelWrapper from "./pages/ChannelWrapper";
 
 function App() {
   const [search, setSearch] = useState("");
@@ -24,17 +24,21 @@ function App() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(storedUser);
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(storedUser);
+      }
+    }
   }, []);
 
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* AUTH */}
         <Route path="/auth" element={<Auth setUser={setUser} />} />
 
-        {/* LAYOUT */}
         <Route
           element={
             <Layout user={user} search={search} setSearch={setSearch} />
@@ -48,9 +52,10 @@ function App() {
           <Route path="/liked" element={<Liked />} />
 
           <Route path="/video/:id" element={<VideoPlayer />} />
-          <Route path="/channel/:id" element={<Channel />} />
 
-          {/* CHANNEL / VIDEO MANAGEMENT */}
+          {/* ✅ ONE SAFE CHANNEL ROUTE */}
+          <Route path="/channel/:id" element={<ChannelWrapper />} />
+
           <Route path="/create-channel" element={<CreateChannel />} />
           <Route path="/edit-channel/:id" element={<EditChannel />} />
           <Route path="/create-video" element={<CreateVideo />} />
@@ -63,6 +68,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

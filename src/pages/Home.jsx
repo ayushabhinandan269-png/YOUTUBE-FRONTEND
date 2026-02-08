@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { videos } from "../data/videos.js";
 import { Link } from "react-router-dom";
@@ -25,10 +24,9 @@ function Home({ search }) {
   });
 
   return (
-    /* ✅ KEY FIX: allow page to grow so Layout can scroll */
     <div className="min-h-full px-3 sm:px-4 md:px-6 pt-4 pb-10">
 
-      {/* ================= FILTER BAR (HORIZONTAL SCROLL) ================= */}
+      {/* ================= FILTER BAR ================= */}
       <div className="flex gap-3 mb-5 overflow-x-auto scrollbar-hide">
         {categories.map((cat) => (
           <button
@@ -69,7 +67,7 @@ function Home({ search }) {
               <div className="mt-3 flex gap-3">
 
                 {/* Channel Avatar */}
-                <Link to={`/channel/${video.channelId}`}>
+                <Link to={`/channel/${video.channelSlug}`}>
                   <img
                     src={video.channelAvatar}
                     alt={video.channelName}
@@ -88,7 +86,7 @@ function Home({ search }) {
 
                   {/* Channel Name */}
                   <Link
-                    to={`/channel/${video.channelId}`}
+                    to={`/channel/${video.channelSlug}`}
                     className="text-xs text-gray-600 mt-1 hover:underline block"
                   >
                     {video.channelName}
@@ -110,6 +108,8 @@ function Home({ search }) {
 }
 
 export default Home;
+
+
 
 
 
