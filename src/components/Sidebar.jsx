@@ -14,15 +14,12 @@ import {
 function Sidebar({ isOpen, onClose }) {
   const [channels, setChannels] = useState([]);
 
-  /* ================= AUTH ================= */
   const token = localStorage.getItem("token");
 
   let user = null;
   try {
     user = JSON.parse(localStorage.getItem("user"));
-  } catch {
-    user = null;
-  }
+  } catch {}
 
   const channelId = user?.channel || null;
 
@@ -30,7 +27,14 @@ function Sidebar({ isOpen, onClose }) {
     `flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 cursor-pointer
      ${isActive ? "bg-gray-200 font-medium" : ""}`;
 
-  /* ================= FETCH CHANNEL LIST ================= */
+  /* ✅ CLOSE ONLY ON MOBILE */
+  const handleNavClick = () => {
+    if (window.innerWidth < 768) {
+      onClose();
+    }
+  };
+
+  /* FETCH CHANNELS ONLY WHEN SIDEBAR IS OPEN */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -48,7 +52,7 @@ function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* ================= OVERLAY (MOBILE) ================= */}
+      {/* MOBILE OVERLAY */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -56,65 +60,63 @@ function Sidebar({ isOpen, onClose }) {
         />
       )}
 
-      {/* ================= SIDEBAR ================= */}
+      {/* SIDEBAR */}
       <aside
         className={`
-          fixed md:static
-          top-16 left-0
-          h-[calc(100vh-64px)]
-          bg-white
-          border-r
-          z-40
-          overflow-y-auto
-          transition-transform duration-300
+          bg-white border-r z-40 overflow-y-auto
+          transition-all duration-300 ease-in-out
+
+          /* MOBILE */
+          fixed top-16 h-[calc(100vh-64px)]
           w-56
-          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+
+          /* DESKTOP */
+          md:static md:h-full md:translate-x-0
+          ${isOpen ? "md:w-56" : "md:w-0"}
         `}
       >
-        <ul className="p-3 space-y-1 text-sm">
+        <ul className={`p-3 space-y-1 text-sm ${!isOpen ? "md:hidden" : ""}`}>
 
-          {/* ================= MAIN ================= */}
-          <NavLink to="/" className={linkStyle} onClick={onClose}>
+          <NavLink to="/" className={linkStyle} onClick={handleNavClick}>
             <HomeIcon className="h-5 w-5" />
             <span>Home</span>
           </NavLink>
 
-          <NavLink to="/explore" className={linkStyle} onClick={onClose}>
+          <NavLink to="/explore" className={linkStyle} onClick={handleNavClick}>
             <FireIcon className="h-5 w-5" />
             <span>Explore</span>
           </NavLink>
 
-          <NavLink to="/shorts" className={linkStyle} onClick={onClose}>
+          <NavLink to="/shorts" className={linkStyle} onClick={handleNavClick}>
             <PlayIcon className="h-5 w-5" />
             <span>Shorts</span>
           </NavLink>
 
-          <NavLink to="/subscriptions" className={linkStyle} onClick={onClose}>
+          <NavLink to="/subscriptions" className={linkStyle} onClick={handleNavClick}>
             <RectangleStackIcon className="h-5 w-5" />
             <span>Subscriptions</span>
           </NavLink>
 
           <hr className="my-3" />
 
-          {/* ================= USER ================= */}
-          <NavLink to="/history" className={linkStyle} onClick={onClose}>
+          <NavLink to="/history" className={linkStyle} onClick={handleNavClick}>
             <ClockIcon className="h-5 w-5" />
             <span>History</span>
           </NavLink>
 
-          <NavLink to="/liked" className={linkStyle} onClick={onClose}>
+          <NavLink to="/liked" className={linkStyle} onClick={handleNavClick}>
             <HandThumbUpIcon className="h-5 w-5" />
             <span>Liked Videos</span>
           </NavLink>
 
-          {/* ================= YOUR CHANNEL ================= */}
           {token && (
             <>
               <hr className="my-3" />
               <NavLink
                 to={channelId ? `/channel/${channelId}` : "/create-channel"}
                 className={linkStyle}
-                onClick={onClose}
+                onClick={handleNavClick}
               >
                 <UserCircleIcon className="h-5 w-5" />
                 <span>
@@ -124,7 +126,6 @@ function Sidebar({ isOpen, onClose }) {
             </>
           )}
 
-          {/* ================= DISCOVER CHANNELS ================= */}
           <hr className="my-3" />
           <p className="px-2 text-xs text-gray-400">
             More from YouTube
@@ -136,7 +137,7 @@ function Sidebar({ isOpen, onClose }) {
                 key={channel._id}
                 to={`/channel/${channel._id}`}
                 className={linkStyle}
-                onClick={onClose}
+                onClick={handleNavClick}
               >
                 <PlayIcon className="h-5 w-5" />
                 <span className="truncate">
@@ -149,6 +150,7 @@ function Sidebar({ isOpen, onClose }) {
               No channels available
             </p>
           )}
+
         </ul>
       </aside>
     </>
@@ -156,6 +158,10 @@ function Sidebar({ isOpen, onClose }) {
 }
 
 export default Sidebar;
+
+
+
+
 
 
 

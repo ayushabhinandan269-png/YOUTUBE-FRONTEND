@@ -4,15 +4,12 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 
 function Layout({ user, search, setSearch }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const closeSidebar = () => setIsSidebarOpen(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    /* Page height locked */
     <div className="h-screen overflow-hidden">
 
-      {/* FIXED HEADER */}
+      {/* HEADER */}
       <Header
         onToggle={() => setIsSidebarOpen((prev) => !prev)}
         search={search}
@@ -20,17 +17,17 @@ function Layout({ user, search, setSearch }) {
         user={user}
       />
 
-      {/* BODY BELOW HEADER */}
+      {/* BODY */}
       <div className="pt-16 h-full flex">
 
-        {/* SIDEBAR (LEFT NAV) */}
+        {/* SIDEBAR */}
         <Sidebar
           isOpen={isSidebarOpen}
-          onClose={closeSidebar}
+          onClose={() => setIsSidebarOpen(false)}
         />
 
-        {/* MAIN AREA */}
-        <main className="flex-1 bg-white">
+        {/* MAIN CONTENT (flex handles resize naturally) */}
+        <main className="flex-1 bg-white overflow-hidden">
           <Outlet />
         </main>
 
@@ -40,6 +37,8 @@ function Layout({ user, search, setSearch }) {
 }
 
 export default Layout;
+
+
 
 
 
