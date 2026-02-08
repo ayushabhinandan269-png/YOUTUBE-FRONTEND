@@ -15,6 +15,8 @@ import Auth from "./pages/Auth";
 import Channel from "./pages/Channel";
 import CreateChannel from "./pages/CreateChannel";
 import EditVideo from "./pages/EditVideo";
+import EditChannel from "./pages/EditChannel";
+import CreateVideo from "./pages/CreateVideo";
 
 function App() {
   const [search, setSearch] = useState("");
@@ -46,10 +48,12 @@ function App() {
           <Route path="/liked" element={<Liked />} />
 
           <Route path="/video/:id" element={<VideoPlayer />} />
-          <Route path="/channel/:channelId" element={<Channel />} />
+          <Route path="/channel/:id" element={<Channel />} />
 
-          {/* PROTECTED UI ROUTES */}
+          {/* CHANNEL / VIDEO MANAGEMENT */}
           <Route path="/create-channel" element={<CreateChannel />} />
+          <Route path="/edit-channel/:id" element={<EditChannel />} />
+          <Route path="/create-video" element={<CreateVideo />} />
           <Route path="/edit-video/:id" element={<EditVideo />} />
         </Route>
 
@@ -59,3 +63,6 @@ function App() {
 }
 
 export default App;
+
+
+

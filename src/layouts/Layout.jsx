@@ -27,7 +27,7 @@ function Layout({ user, search, setSearch }) {
         />
 
         {/* MAIN CONTENT (flex handles resize naturally) */}
-        <main className="flex-1 bg-white overflow-hidden">
+        <main className="flex-1 bg-white overflow-y-auto">
           <Outlet />
         </main>
 

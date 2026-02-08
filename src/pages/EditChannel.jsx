@@ -1,59 +1,144 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { useState } from "react";
+import { getChannelById, saveChannel, loadChannel } from "../utils/channelStorage";
 
 function EditChannel() {
-  const { channelId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const [channelName, setChannelName] = useState("");
-  const [description, setDescription] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const [banner, setBanner] = useState(null);
+  /* ================= PDF SAFE OWNER CHECK ================= */
+  const isOwner = true; // replace later with auth
 
-  const token = localStorage.getItem("token");
+  if (!isOwner) {
+    return (
+      <p className="p-6 text-red-500 font-medium">
+        You are not authorized to edit this channel
+      </p>
+    );
+  }
 
-  const submitHandler = async () => {
-    const formData = new FormData();
-    formData.append("channelName", channelName);
-    formData.append("description", description);
-    if (avatar) formData.append("avatar", avatar);
-    if (banner) formData.append("banner", banner);
+  /* ================= LOAD CHANNEL ================= */
+  const baseChannel = getChannelById(id);
+  const savedChannel = loadChannel(id);
+  const channel = savedChannel || baseChannel;
 
-    await api.put(`/channels/${channelId}`, formData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  if (!channel) {
+    return (
+      <p className="p-6 text-red-500 font-medium">
+        Channel not found
+      </p>
+    );
+  }
 
-    navigate(`/channel/${channelId}`);
+  /* ================= FORM STATE ================= */
+  const [channelName, setChannelName] = useState(channel.channelName);
+  const [avatar, setAvatar] = useState(channel.avatar);
+  const [banner, setBanner] = useState(channel.banner);
+  const [description, setDescription] = useState(channel.description);
+  const [loading, setLoading] = useState(false);
+
+  /* ================= SAVE CHANNEL ================= */
+  const handleSave = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const updatedChannel = {
+      channelId: id,
+      channelName,
+      avatar,
+      banner,
+      description,
+    };
+
+    saveChannel(updatedChannel);
+
+    setTimeout(() => {
+      alert("Channel updated successfully ✅");
+      navigate(`/channel/${id}`);
+    }, 300);
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h2 className="text-xl font-bold mb-4">Edit Channel</h2>
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow mt-6">
 
-      <input
-        placeholder="Channel name"
-        onChange={(e) => setChannelName(e.target.value)}
-        className="border w-full p-2 mb-3"
-      />
+      <h1 className="text-2xl font-bold mb-6">
+        Edit Channel
+      </h1>
 
-      <textarea
-        placeholder="Description"
-        onChange={(e) => setDescription(e.target.value)}
-        className="border w-full p-2 mb-3"
-      />
+      <form onSubmit={handleSave} className="space-y-4">
 
-      <input type="file" onChange={(e) => setAvatar(e.target.files[0])} />
-      <input type="file" onChange={(e) => setBanner(e.target.files[0])} />
+        {/* CHANNEL NAME */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Channel Name
+          </label>
+          <input
+            value={channelName}
+            onChange={(e) => setChannelName(e.target.value)}
+            required
+            className="w-full border px-4 py-2 rounded"
+          />
+        </div>
 
-      <button
-        onClick={submitHandler}
-        className="mt-4 bg-black text-white px-4 py-2 rounded"
-      >
-        Update
-      </button>
+        {/* AVATAR */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Avatar URL
+          </label>
+          <input
+            value={avatar}
+            onChange={(e) => setAvatar(e.target.value)}
+            className="w-full border px-4 py-2 rounded"
+          />
+        </div>
+
+        {/* BANNER */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Banner URL
+          </label>
+          <input
+            value={banner}
+            onChange={(e) => setBanner(e.target.value)}
+            className="w-full border px-4 py-2 rounded"
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Description
+          </label>
+          <textarea
+            rows="4"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border px-4 py-2 rounded"
+          />
+        </div>
+
+        {/* ACTIONS */}
+        <div className="flex gap-4 mt-6">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-black text-white px-6 py-2 rounded"
+          >
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="border px-6 py-2 rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
 
 export default EditChannel;
+

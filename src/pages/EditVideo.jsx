@@ -1,71 +1,67 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { videos } from "../data/videos";
-import api from "../services/api";
+import { getVideos, saveVideos } from "../utils/videoStorage";
 
 function EditVideo() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  /* ================= LOAD VIDEOS ================= */
+  const [videos, setVideos] = useState(() => getVideos());
   const video = videos.find((v) => v.videoId === id);
 
-  const token = localStorage.getItem("token");
-  const myChannelId = localStorage.getItem("channelId");
-
-  // 🔒 AUTH CHECK
-  if (!token) {
-    return <p className="p-6 text-red-500">Login required</p>;
-  }
+  /* ================= PDF SAFE OWNER CHECK ================= */
+  const isOwner = true; // later replace with real auth
 
   if (!video) {
-    return <p className="p-6">Video not found</p>;
+    return (
+      <p className="p-6 text-red-500 font-medium">
+        Video not found
+      </p>
+    );
   }
 
-  // 🔒 OWNER CHECK
-  if (myChannelId !== video.channelId) {
+  if (!isOwner) {
     return (
-      <p className="p-6 text-red-500">
+      <p className="p-6 text-red-500 font-medium">
         You are not authorized to edit this video
       </p>
     );
   }
 
-  // ================= FORM STATE =================
+  /* ================= FORM STATE ================= */
   const [title, setTitle] = useState(video.title);
   const [thumbnailUrl, setThumbnailUrl] = useState(video.thumbnailUrl);
-  const [description, setDescription] = useState(
-    video.description || ""
-  );
+  const [description, setDescription] = useState(video.description || "");
   const [loading, setLoading] = useState(false);
 
-  // ================= UPDATE VIDEO =================
-  const handleUpdate = async (e) => {
+  /* ================= UPDATE VIDEO ================= */
+  const handleUpdate = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      await api.put(
-        `/videos/${id}`,
-        { title, thumbnailUrl, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const updatedVideos = videos.map((v) =>
+      v.videoId === id
+        ? {
+            ...v,
+            title,
+            thumbnailUrl,
+            description,
+          }
+        : v
+    );
 
+    saveVideos(updatedVideos);
+    setVideos(updatedVideos);
+
+    setTimeout(() => {
       alert("Video updated successfully ✅");
       navigate(`/video/${id}`);
-    } catch (err) {
-      console.error("Update failed", err);
-      alert("Failed to update video");
-    } finally {
-      setLoading(false);
-    }
+    }, 300);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow">
+    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow mt-6">
 
       <h1 className="text-2xl font-bold mb-6">
         Edit Video

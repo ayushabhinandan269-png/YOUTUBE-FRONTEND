@@ -113,31 +113,55 @@ function VideoPlayer() {
           {video.title}
         </h1>
 
-        {/* VIEWS + ACTIONS */}
-        <div className="flex justify-between items-center mt-2 flex-wrap gap-3">
+        {/* ================= CHANNEL INFO (NEW) ================= */}
+        <div className="flex items-center justify-between mt-4 flex-wrap gap-4">
+
+          <div className="flex items-center gap-3">
+            <Link to={`/channel/${video.channelId}`}>
+              <img
+                src={video.channelAvatar}
+                alt={video.channelName}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            </Link>
+
+            <div>
+              <Link
+                to={`/channel/${video.channelId}`}
+                className="font-semibold hover:underline"
+              >
+                {video.channelName}
+              </Link>
+              <p className="text-xs text-gray-500">
+                Subscribe for more videos
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={toggleSubscribe}
+            className={`px-5 py-2 rounded-full text-sm text-white ${
+              subscribed ? "bg-gray-600" : "bg-black"
+            }`}
+          >
+            {subscribed ? "Subscribed" : "Subscribe"}
+          </button>
+        </div>
+
+        {/* VIEWS + LIKE */}
+        <div className="flex justify-between items-center mt-3 flex-wrap gap-3">
           <p className="text-sm text-gray-600">
             {formatNumber(video.views)} views
           </p>
 
-          <div className="flex gap-3">
-            <button
-              onClick={toggleVideoLike}
-              className={`border px-4 py-1 rounded ${
-                videoLiked ? "bg-gray-200" : ""
-              }`}
-            >
-              👍 {videoLiked ? "Liked" : "Like"}
-            </button>
-
-            <button
-              onClick={toggleSubscribe}
-              className={`px-4 py-1 rounded text-white ${
-                subscribed ? "bg-gray-600" : "bg-black"
-              }`}
-            >
-              {subscribed ? "Subscribed" : "Subscribe"}
-            </button>
-          </div>
+          <button
+            onClick={toggleVideoLike}
+            className={`border px-4 py-1 rounded ${
+              videoLiked ? "bg-gray-200" : ""
+            }`}
+          >
+            👍 {videoLiked ? "Liked" : "Like"}
+          </button>
         </div>
 
         {/* ================= COMMENTS ================= */}
@@ -214,7 +238,7 @@ function VideoPlayer() {
         </div>
       </div>
 
-      {/* ================= RIGHT: UP NEXT (EVEN SIZE + SCROLL) ================= */}
+      {/* ================= RIGHT: UP NEXT ================= */}
       <aside className="w-full lg:w-80 shrink-0 overflow-y-auto pl-2">
         <h3 className="font-semibold mb-4">Up next</h3>
 
@@ -224,9 +248,8 @@ function VideoPlayer() {
             <Link
               key={v.videoId}
               to={`/video/${v.videoId}`}
-              className="flex gap-3 mb-3 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+              className="flex gap-3 mb-3 p-2 rounded-lg hover:bg-gray-100"
             >
-              {/* THUMBNAIL */}
               <div className="w-40 h-24 shrink-0 bg-black rounded-lg overflow-hidden">
                 <img
                   src={v.thumbnailUrl}
@@ -235,12 +258,10 @@ function VideoPlayer() {
                 />
               </div>
 
-              {/* TEXT (FIXED HEIGHT) */}
               <div className="flex flex-col justify-between h-24 overflow-hidden">
-                <p className="text-sm font-medium leading-snug line-clamp-2">
+                <p className="text-sm font-medium line-clamp-2">
                   {v.title}
                 </p>
-
                 <p className="text-xs text-gray-500">
                   {v.channelName}
                 </p>
@@ -253,6 +274,7 @@ function VideoPlayer() {
 }
 
 export default VideoPlayer;
+
 
 
 
