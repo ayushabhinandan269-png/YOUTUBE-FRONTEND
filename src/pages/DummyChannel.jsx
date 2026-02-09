@@ -8,13 +8,13 @@ function DummyChannel() {
   const [activeTab, setActiveTab] = useState("videos");
   const [subscribed, setSubscribed] = useState(false);
 
-  /* ✅ SAFELY filter videos using channelSlug */
+  /* SAFELY filter videos using channelSlug */
   const channelVideos = useMemo(
     () => videos.filter((v) => v.channelSlug === id),
     [id]
   );
 
-  /* ✅ If Home shows the channel, it MUST exist here */
+  /*  If Home shows the channel, it MUST exist here */
   if (!channelVideos.length) {
     return (
       <div className="p-6 text-gray-500">
@@ -23,7 +23,7 @@ function DummyChannel() {
     );
   }
 
-  /* ✅ Build channel info from mock data */
+  /* Build channel info from mock data */
   const channel = {
     channelName: channelVideos[0].channelName,
     avatar: channelVideos[0].channelAvatar,
