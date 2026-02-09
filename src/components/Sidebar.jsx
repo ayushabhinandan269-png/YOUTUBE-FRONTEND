@@ -23,18 +23,21 @@ function Sidebar({ isOpen, onClose }) {
 
   const channelId = user?.channel || null;
 
+  /* ================= LINK STYLE ================= */
   const linkStyle = ({ isActive }) =>
-    `flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 cursor-pointer
-     ${isActive ? "bg-gray-200 font-medium" : ""}`;
+    `flex items-center gap-4 p-2 rounded-lg cursor-pointer transition
+     text-gray-800 dark:text-gray-200
+     hover:bg-gray-100 dark:hover:bg-[#272727]
+     ${isActive ? "bg-gray-200 dark:bg-[#3a3a3a] font-medium" : ""}`;
 
-  /* ✅ CLOSE ONLY ON MOBILE */
+  /* ================= CLOSE ONLY ON MOBILE ================= */
   const handleNavClick = () => {
     if (window.innerWidth < 768) {
       onClose();
     }
   };
 
-  /* FETCH CHANNELS ONLY WHEN SIDEBAR IS OPEN */
+  /* ================= FETCH CHANNELS ================= */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -52,7 +55,7 @@ function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* MOBILE OVERLAY */}
+      {/* ================= MOBILE OVERLAY ================= */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -60,10 +63,13 @@ function Sidebar({ isOpen, onClose }) {
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* ================= SIDEBAR ================= */}
       <aside
         className={`
-          bg-white border-r z-40 overflow-y-auto
+          bg-white dark:bg-[#0f0f0f]
+          border-r border-gray-200 dark:border-[#272727]
+          text-gray-900 dark:text-gray-100
+          z-40 overflow-y-auto
           transition-all duration-300 ease-in-out
 
           /* MOBILE */
@@ -78,6 +84,7 @@ function Sidebar({ isOpen, onClose }) {
       >
         <ul className={`p-3 space-y-1 text-sm ${!isOpen ? "md:hidden" : ""}`}>
 
+          {/* ================= MAIN ================= */}
           <NavLink to="/" className={linkStyle} onClick={handleNavClick}>
             <HomeIcon className="h-5 w-5" />
             <span>Home</span>
@@ -93,13 +100,18 @@ function Sidebar({ isOpen, onClose }) {
             <span>Shorts</span>
           </NavLink>
 
-          <NavLink to="/subscriptions" className={linkStyle} onClick={handleNavClick}>
+          <NavLink
+            to="/subscriptions"
+            className={linkStyle}
+            onClick={handleNavClick}
+          >
             <RectangleStackIcon className="h-5 w-5" />
             <span>Subscriptions</span>
           </NavLink>
 
-          <hr className="my-3" />
+          <hr className="my-3 border-gray-200 dark:border-[#272727]" />
 
+          {/* ================= HISTORY ================= */}
           <NavLink to="/history" className={linkStyle} onClick={handleNavClick}>
             <ClockIcon className="h-5 w-5" />
             <span>History</span>
@@ -110,9 +122,10 @@ function Sidebar({ isOpen, onClose }) {
             <span>Liked Videos</span>
           </NavLink>
 
+          {/* ================= USER CHANNEL ================= */}
           {token && (
             <>
-              <hr className="my-3" />
+              <hr className="my-3 border-gray-200 dark:border-[#272727]" />
               <NavLink
                 to={channelId ? `/channel/${channelId}` : "/create-channel"}
                 className={linkStyle}
@@ -126,8 +139,10 @@ function Sidebar({ isOpen, onClose }) {
             </>
           )}
 
-          <hr className="my-3" />
-          <p className="px-2 text-xs text-gray-400">
+          <hr className="my-3 border-gray-200 dark:border-[#272727]" />
+
+          {/* ================= MORE FROM YOUTUBE ================= */}
+          <p className="px-2 text-xs text-gray-400 dark:text-gray-500">
             More from YouTube
           </p>
 
@@ -146,11 +161,10 @@ function Sidebar({ isOpen, onClose }) {
               </NavLink>
             ))
           ) : (
-            <p className="px-2 py-2 text-xs text-gray-400">
+            <p className="px-2 py-2 text-xs text-gray-400 dark:text-gray-500">
               No channels available
             </p>
           )}
-
         </ul>
       </aside>
     </>

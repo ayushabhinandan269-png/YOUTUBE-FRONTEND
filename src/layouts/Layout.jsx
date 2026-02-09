@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -6,8 +6,40 @@ import Sidebar from "../components/Sidebar";
 function Layout({ user, search, setSearch }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  /* ================= DARK MODE STATE ================= */
+  const [darkMode, setDarkMode] = useState(
+    document.documentElement.classList.contains("dark")
+  );
+
+  /* ================= APPLY THEME ON LOAD ================= */
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+
+    if (
+      storedTheme === "dark" ||
+      (!storedTheme &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+      setDarkMode(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setDarkMode(false);
+    }
+  }, []);
+
+  /* ================= TOGGLE THEME ================= */
+  const toggleTheme = () => {
+    setDarkMode((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle("dark", next);
+      localStorage.setItem("theme", next ? "dark" : "light");
+      return next;
+    });
+  };
+
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
 
       {/* HEADER */}
       <Header
@@ -15,6 +47,8 @@ function Layout({ user, search, setSearch }) {
         search={search}
         setSearch={setSearch}
         user={user}
+        darkMode={darkMode}
+        toggleTheme={toggleTheme}
       />
 
       {/* BODY */}
@@ -26,8 +60,8 @@ function Layout({ user, search, setSearch }) {
           onClose={() => setIsSidebarOpen(false)}
         />
 
-        {/* MAIN CONTENT (flex handles resize naturally) */}
-        <main className="flex-1 bg-white overflow-y-auto">
+        {/* MAIN CONTENT */}
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-black transition-colors duration-300">
           <Outlet />
         </main>
 
@@ -37,6 +71,7 @@ function Layout({ user, search, setSearch }) {
 }
 
 export default Layout;
+
 
 
 
