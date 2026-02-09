@@ -1,16 +1,75 @@
-# React + Vite
+==============================
+FRONTEND — README.md
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+YouTube Clone – Frontend
 
-Currently, two official plugins are available:
+Live Demo
+Frontend Live Link:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+(Replace this with your actual deployed link)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Description
+This is the frontend of a YouTube-like video streaming platform built using React.
+It focuses on a clean YouTube-style UI, routing, dummy data handling, and realistic channel and video pages.
 
-## Expanding the ESLint configuration
+Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+• Home page with YouTube-style video grid
+• Category-based filtering
+• Search functionality
+• Video player page
+• Dummy channel pages generated from mock data
+• Channel UI includes:
+– Banner
+– Subscribe button
+– Videos and About tabs
+• Fully responsive layout
+• Sidebar navigation (Home, Explore, Shorts, etc.)
+
+Note:
+Dummy channels and videos are rendered using mock data for now. Backend integration is planned later.
+
+Tech Stack
+
+• React (Vite)
+• React Router DOM
+• Tailwind CSS
+• JavaScript (ES6+)
+• Mock data for videos and channels
+
+Folder Structure
+
+frontend
+│
+├── src
+│ ├── pages (Home, Channel, DummyChannel, VideoPlayer)
+│ ├── components (Reusable UI components)
+│ ├── layouts (Main layout)
+│ ├── data (Mock video and channel data)
+│ ├── utils (Helper functions)
+│ └── services (API config – future use)
+│
+└── README.md
+
+How to Run Frontend
+
+cd frontend
+npm install
+npm run dev
+
+Runs on:
+http://localhost:5173
+
+Future Improvements
+
+• Backend-connected channel pages
+• Like and dislike system
+• Comment section
+• Playlist support
+• Authentication integration
+
+Author
+
+Ayush Abhinandan
+Capstone Project – Full Stack Development
