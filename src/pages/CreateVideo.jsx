@@ -21,7 +21,7 @@ function CreateVideo() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 🔴 TEMP LOGIC (frontend-only as per current setup)
+    // TEMP LOGIC (frontend-only as per current setup)
     console.log("New video created:", form);
 
     alert("Video created successfully (frontend demo)");
