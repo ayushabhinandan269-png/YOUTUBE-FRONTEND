@@ -1,5 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
 
+/* ================= AVATAR COLOR HELPER ================= */
+const avatarColors = [
+  "bg-red-100 text-red-600",
+  "bg-green-100 text-green-600",
+  "bg-blue-100 text-blue-600",
+  "bg-purple-100 text-purple-600",
+  "bg-pink-100 text-pink-600",
+  "bg-yellow-100 text-yellow-700",
+  "bg-indigo-100 text-indigo-600",
+];
+
+const getAvatarColor = (value = "") => {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = value.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return avatarColors[Math.abs(hash) % avatarColors.length];
+};
+
 function Header({ onToggle, search, setSearch, user, darkMode, toggleTheme }) {
   const navigate = useNavigate();
 
@@ -8,32 +27,37 @@ function Header({ onToggle, search, setSearch, user, darkMode, toggleTheme }) {
     navigate("/");
   };
 
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between
-                       px-3 md:px-6 py-3 border-b
-                       bg-white dark:bg-black
-                       text-black dark:text-white
-                       transition-colors duration-300">
+  // ✅ always safe
+  const identifier = user?.username || user?.email || "U";
 
-      {/* ================= LEFT ================= */}
+  return (
+    <header
+      className="fixed top-0 left-0 right-0 z-50
+                 flex items-center justify-between
+                 px-3 md:px-6 py-3
+                 border-b border-gray-200 dark:border-gray-800
+                 bg-white dark:bg-black
+                 text-black dark:text-white"
+    >
+      {/* LEFT */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggle}
-          className="text-2xl hover:bg-gray-100 dark:hover:bg-gray-800
-                     p-2 rounded-md"
+          className="text-2xl p-2 rounded-md
+                     hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           ☰
         </button>
 
         <Link
           to="/"
-          className="text-lg md:text-xl font-bold text-red-600 tracking-tight"
+          className="text-lg md:text-xl font-bold text-red-600"
         >
           YouTube
         </Link>
       </div>
 
-      {/* ================= CENTER SEARCH (DESKTOP) ================= */}
+      {/* CENTER SEARCH */}
       <form
         onSubmit={handleSearch}
         className="hidden md:flex items-center w-125"
@@ -42,36 +66,25 @@ function Header({ onToggle, search, setSearch, user, darkMode, toggleTheme }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search"
-          className="flex-1 px-4 py-2 border rounded-l-full outline-none
+          className="flex-1 px-4 py-2 border rounded-l-full
                      bg-white dark:bg-gray-900
-                     text-black dark:text-white
-                     border-gray-300 dark:border-gray-700"
+                     border-gray-300 dark:border-gray-700
+                     outline-none"
         />
-
         <button
           type="submit"
           className="px-5 py-2 border border-l-0 rounded-r-full
-                     bg-gray-100 hover:bg-gray-200
-                     dark:bg-gray-800 dark:hover:bg-gray-700
-                     dark:border-gray-700"
+                     bg-gray-100 dark:bg-gray-800
+                     hover:bg-gray-200 dark:hover:bg-gray-700
+                     border-gray-300 dark:border-gray-700"
         >
           🔍
         </button>
       </form>
 
-      {/* ================= RIGHT ================= */}
+      {/* RIGHT */}
       <div className="flex items-center gap-3">
-
-        {/* Mobile search */}
-        <button
-          onClick={() => navigate("/")}
-          className="md:hidden p-2 rounded-full
-                     hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          🔍
-        </button>
-
-        {/* 🌙 DARK MODE TOGGLE */}
+        {/* Theme toggle */}
         <button
           onClick={toggleTheme}
           className="px-3 py-1 rounded-full border text-sm
@@ -84,14 +97,22 @@ function Header({ onToggle, search, setSearch, user, darkMode, toggleTheme }) {
 
         {user ? (
           <>
-            <span className="hidden sm:block text-sm font-medium">
-              Hi, {user}
-            </span>
+            {/* USER AVATAR */}
+            <div
+              className={`w-9 h-9 rounded-full
+                          flex items-center justify-center
+                          font-semibold uppercase text-sm
+                          ${getAvatarColor(identifier)}`}
+            >
+              {identifier.charAt(0).toUpperCase()}
+            </div>
 
+            {/* LOGOUT */}
             <button
               onClick={() => {
-                localStorage.clear();
-                window.location.reload();
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                navigate("/auth");
               }}
               className="px-3 py-1 border rounded-full text-sm
                          hover:bg-gray-100 dark:hover:bg-gray-800
@@ -116,6 +137,11 @@ function Header({ onToggle, search, setSearch, user, darkMode, toggleTheme }) {
 }
 
 export default Header;
+
+
+
+
+
 
 
 

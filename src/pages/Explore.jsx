@@ -1,9 +1,16 @@
+import { useParams } from "react-router-dom";
+
 function Explore() {
+  const { category } = useParams();
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Explore</h1>
-      <p className="mt-2 text-gray-600">Trending and recommended videos.</p>
+    <div className="p-4">
+      <h1 className="text-xl font-semibold capitalize">
+        {category || "Explore"}
+      </h1>
     </div>
   );
 }
+
 export default Explore;
+

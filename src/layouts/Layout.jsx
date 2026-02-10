@@ -5,13 +5,8 @@ import Sidebar from "../components/Sidebar";
 
 function Layout({ user, search, setSearch }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
-  /* ================= DARK MODE STATE ================= */
-  const [darkMode, setDarkMode] = useState(
-    document.documentElement.classList.contains("dark")
-  );
-
-  /* ================= APPLY THEME ON LOAD ================= */
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
 
@@ -28,7 +23,6 @@ function Layout({ user, search, setSearch }) {
     }
   }, []);
 
-  /* ================= TOGGLE THEME ================= */
   const toggleTheme = () => {
     setDarkMode((prev) => {
       const next = !prev;
@@ -40,8 +34,6 @@ function Layout({ user, search, setSearch }) {
 
   return (
     <div className="h-screen overflow-hidden bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
-
-      {/* HEADER */}
       <Header
         onToggle={() => setIsSidebarOpen((prev) => !prev)}
         search={search}
@@ -51,26 +43,26 @@ function Layout({ user, search, setSearch }) {
         toggleTheme={toggleTheme}
       />
 
-      {/* BODY */}
       <div className="pt-16 h-full flex">
-
-        {/* SIDEBAR */}
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
 
-        {/* MAIN CONTENT */}
         <main className="flex-1 overflow-y-auto bg-white dark:bg-black transition-colors duration-300">
           <Outlet />
         </main>
-
       </div>
     </div>
   );
 }
 
 export default Layout;
+
+
+
+
+
 
 
 

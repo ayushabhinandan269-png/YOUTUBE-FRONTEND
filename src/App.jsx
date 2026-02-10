@@ -22,26 +22,39 @@ function App() {
   const [search, setSearch] = useState("");
   const [user, setUser] = useState(null);
 
+  // RESTORE USER ON APP LOAD (CRITICAL FIX)
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        setUser(storedUser);
-      }
-    }
-  }, []);
+  const storedUser = localStorage.getItem("user");
+
+  if (!storedUser || storedUser === "undefined") {
+    setUser(null);
+    return;
+  }
+
+  try {
+    setUser(JSON.parse(storedUser));
+  } catch (err) {
+    console.error("Corrupted user in localStorage:", err);
+    localStorage.removeItem("user");
+    setUser(null);
+  }
+}, []);
+
 
   return (
     <BrowserRouter>
       <Routes>
-
+        {/* AUTH */}
         <Route path="/auth" element={<Auth setUser={setUser} />} />
 
+        {/* MAIN LAYOUT */}
         <Route
           element={
-            <Layout user={user} search={search} setSearch={setSearch} />
+            <Layout
+              user={user}
+              search={search}
+              setSearch={setSearch}
+            />
           }
         >
           <Route path="/" element={<Home search={search} />} />
@@ -53,22 +66,20 @@ function App() {
 
           <Route path="/video/:id" element={<VideoPlayer />} />
 
-          {/* ✅ ONE SAFE CHANNEL ROUTE */}
+          {/* CHANNEL ROUTES */}
           <Route path="/channel/:id" element={<ChannelWrapper />} />
-
           <Route path="/create-channel" element={<CreateChannel />} />
           <Route path="/edit-channel/:id" element={<EditChannel />} />
+
+          {/* VIDEO ROUTES */}
           <Route path="/create-video" element={<CreateVideo />} />
           <Route path="/edit-video/:id" element={<EditVideo />} />
         </Route>
-
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
-
-
 
 
